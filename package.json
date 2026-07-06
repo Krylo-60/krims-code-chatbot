@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "@krishivpb60/krims-code-sdk": "^0.1.0",
+    "dotenv": "^16.4.5"
   },
   "devDependencies": {
     "vite": "^5.0.0"

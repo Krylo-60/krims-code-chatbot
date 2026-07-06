@@ -1,5 +1,9 @@
 import path from 'path';
 import fs from 'fs';
+import { KrimsClient } from '@krishivpb60/krims-code-sdk';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 // Cached AI Database variables (persisted across warm invocations)
 let trainingText = '';
@@ -253,7 +257,57 @@ export default async function handler(req, res) {
   let activeEngine = model || 'krims-local';
 
   try {
-    if (activeEngine === 'krims-cloud') {
+    if (activeEngine === 'gemini' || activeEngine === 'google') {
+      const apiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY;
+      if (!apiKey) {
+        throw new Error("GOOGLE_API_KEY or GEMINI_API_KEY is missing from environment variables.");
+      }
+      const sdkClient = new KrimsClient({
+        provider: 'google',
+        apiKey,
+        model: 'gemini-2.5-flash'
+      });
+      const sdkRes = await sdkClient.ask(prompt, {
+        systemInstruction,
+        temperature,
+        maxTokens,
+        history
+      });
+      responseText = sdkRes.response;
+    } else if (activeEngine === 'groq') {
+      const apiKey = process.env.GROQ_API_KEY;
+      if (!apiKey) {
+        throw new Error("GROQ_API_KEY is missing from environment variables.");
+      }
+      const sdkClient = new KrimsClient({
+        provider: 'groq',
+        apiKey
+      });
+      const sdkRes = await sdkClient.ask(prompt, {
+        systemInstruction,
+        temperature,
+        maxTokens,
+        history
+      });
+      responseText = sdkRes.response;
+    } else if (activeEngine === 'grok' || activeEngine === 'xai') {
+      const apiKey = process.env.XAI_API_KEY;
+      if (!apiKey) {
+        throw new Error("XAI_API_KEY is missing from environment variables.");
+      }
+      const sdkClient = new KrimsClient({
+        provider: 'xai',
+        apiKey,
+        model: 'grok-beta'
+      });
+      const sdkRes = await sdkClient.ask(prompt, {
+        systemInstruction,
+        temperature,
+        maxTokens,
+        history
+      });
+      responseText = sdkRes.response;
+    } else if (activeEngine === 'krims-cloud') {
       try {
         responseText = await generateCloudText(prompt, systemInstruction, temperature, maxTokens, history);
       } catch (err) {
