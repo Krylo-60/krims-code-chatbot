@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Krims Code // AI Studio Playground</title>
+  <meta name="description" content="Krims Code AI Studio is a premium developer playground to customize, test, and save your own LLM configurations." />
+  <link rel="icon" href="./logo.png" />
+  
+  <!-- Font Imports -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="app-container" id="app">
+    
+    <!-- Left Configuration Panel (AI Studio Sidebar) -->
+    <aside class="studio-sidebar" id="config-sidebar">
+      <div class="sidebar-header">
+        <a class="brand" href="#">
+          <img src="./logo.png" alt="Krims Code Logo" id="brand-logo" />
+          <span>Krims AI Studio</span>
+        </a>
+        <div class="brand-subtitle">Model Playground v1.0</div>
+      </div>
+
+      <div class="sidebar-scroll-content">
+        
+        <!-- System Prompt Instructions -->
+        <div class="config-section">
+          <div class="section-title-container">
+            <span class="section-title">System Instructions</span>
+            <span class="tooltip" title="System instructions define the AI's core persona and behavior (e.g. 'Speak like a pirate')">?</span>
+          </div>
+          <textarea id="system-prompt-input" placeholder="You are a helpful AI assistant created by Krishiv. Answer all coding queries with clear instructions..."></textarea>
+        </div>
+
+        <!-- Model Parameters -->
+        <div class="config-section">
+          <span class="section-title">Model settings</span>
+          
+          <div class="setting-item">
+            <label for="model-select">Model Engine</label>
+            <select id="model-select">
+              <option value="krims-local" selected>Krims-Local-Engine (Custom JS Chain)</option>
+              <option value="krims-cloud">Krims-Cloud-Engine (Qwen-72B Cloud LLM)</option>
+            </select>
+          </div>
+
+          <!-- Sliders for Temperature -->
+          <div class="setting-item">
+            <div class="slider-header">
+              <label for="temp-slider">Temperature</label>
+              <span id="temp-val">0.7</span>
+            </div>
+            <input type="range" id="temp-slider" min="0" max="1" step="0.1" value="0.7" />
+            <div class="slider-labels">
+              <span>Precise</span>
+              <span>Creative</span>
+            </div>
+          </div>
+
+          <!-- Sliders for Max Tokens -->
+          <div class="setting-item">
+            <div class="slider-header">
+              <label for="tokens-slider">Max Output Tokens</label>
+              <span id="tokens-val">512</span>
+            </div>
+            <input type="range" id="tokens-slider" min="64" max="1024" step="64" value="512" />
+          </div>
+        </div>
+
+        <!-- Saved Presets Configurations -->
+        <div class="config-section">
+          <span class="section-title">Save & Load Presets</span>
+          <div class="preset-actions">
+            <input type="text" id="preset-name-input" placeholder="My Custom AI name..." />
+            <button id="btn-save-preset" class="btn-preset-save">Save AI Preset</button>
+          </div>
+          <div id="presets-list" class="presets-list">
+            <!-- Dynamically loaded presets -->
+          </div>
+        </div>
+
+      </div>
+
+      <div class="sidebar-footer">
+        <div>API Mode: Custom Cloud/Local Engine</div>
+        <div>Creator: Krishiv Workspace</div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace (Chat / Testing Area) -->
+    <main class="studio-main">
+      <header class="studio-header">
+        <div class="header-left">
+          <button id="mobile-config-toggle" class="mobile-menu-btn" title="Toggle parameters panel">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="21" x2="4" y2="14"></line>
+              <line x1="4" y1="10" x2="4" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12" y2="3"></line>
+              <line x1="20" y1="21" x2="20" y2="16"></line>
+              <line x1="20" y1="12" x2="20" y2="3"></line>
+              <line x1="1" y1="14" x2="7" y2="14"></line>
+              <line x1="9" y1="8" x2="15" y2="8"></line>
+              <line x1="17" y1="16" x2="23" y2="16"></line>
+            </svg>
+          </button>
+          <div class="header-title-container">
+            <div id="active-preset-title" class="header-title">Krims Code AI Hub</div>
+            <div class="header-subtitle">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              Temp: <span id="header-temp-val">0.7</span> | Max Tokens: <span id="header-tokens-val">512</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="header-status-indicator">
+          <span id="pulse-dot" class="pulse-dot active"></span>
+          <span id="engine-status-text">Playground Active</span>
+        </div>
+      </header>
+
+      <!-- Chat logs workspace -->
+      <div id="chat-messages" class="chat-messages">
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="welcome-container">
+          <div class="welcome-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+              <polyline points="2 17 12 22 22 17"></polyline>
+              <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+          </div>
+          <h1 class="welcome-title">Krims Code AI Studio</h1>
+          <p class="welcome-desc">
+            Welcome to the developer playground. Tweak your System Instructions in the left panel to change my core behavior. You can test your settings right here in the chat.
+          </p>
+          
+          <div class="prompt-grid">
+            <div class="prompt-card" data-prompt="Help me write a script using the `krims-code-sdk` to execute a series of prompts programmatically.">
+              <div class="prompt-card-title">SDK Workflows</div>
+              <div class="prompt-card-body">Run automation loops and client initializations.</div>
+            </div>
+            <div class="prompt-card" data-prompt="How do I run the `krims-code` CLI to diagnose my local project for build and performance errors?">
+              <div class="prompt-card-title">CLI Diagnostics</div>
+              <div class="prompt-card-body">Explore commands and debug flags for terminal auditing.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat input panel -->
+      <div class="input-panel">
+        <div class="input-container">
+          <textarea id="chat-input" placeholder="Type a prompt to test your custom AI configuration..."></textarea>
+          <div class="input-actions">
+            <div class="input-actions-left">
+              <button id="btn-clear-chat" class="btn-action" title="Reset chat testing logs">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+              <span id="char-counter">0 chars</span>
+            </div>
+            <button id="btn-send-chat" class="btn-send">
+              <span>Run Test</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="stats-footer">
+          <span id="latency-stat">Latency: -</span>
+          <span id="tokens-stat">Speed: -</span>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
