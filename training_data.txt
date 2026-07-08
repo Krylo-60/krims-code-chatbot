@@ -30,3 +30,35 @@ We do not need OpenAI or Google API keys because Krishiv wrote the AI engine him
 Game Master mode is a fun preset that turns the chatbot into a text adventure game.
 Always write clean functions, document your parameters, and verify your builds using Vite.
 Congratulations on launching your own custom AI API, Krishiv!
+Krims Code IDE is a premium desktop developer shell built using Tauri, Rust, HTML5, and Monaco Editor.
+Open your workspace by selecting folder options or using the command terminal in the bottom collapsible pane.
+Install extension plugins like the Cyberpunk Red theme or Robo Rojo syncing tools in the extensions marketplace tab.
+To create a new file, click the Create New File button, type a valid file extension, and code in real-time.
+Run npm packages, cargo builds, python scripts, and git commits directly inside the integrated shell terminal.
+The bottom console executes user shell commands using true PowerShell sessions on Windows and Bash sessions on Unix systems.
+The terminal automatically executes command operations in the current working directory of your opened folder.
+The Krims Code CLI is available on npm as @krishivpb60/krims-code-cli and on PyPI as krims-code-cli.
+Install the CLI globally by running npm install -g @krishivpb60/krims-code-cli or pip install krims-code-cli.
+Verify CLI installation details and get help options by executing: krims-code --help in the command terminal.
+To query the AI router gateway from the CLI prompt, run: krims-code ask "your query here".
+Start interactive terminal chat sessions with the bot by executing: krims-code chat.
+Aether AI CLI has been deprecated and development has officially transitioned to the new Krims Code CLI.
+For updates, new features, and active chatbot modules, developers should migrate to the latest Krims Code package.
+The developer SDK provides programmatic access for sending prompt automation loops and managing session configurations.
+Create client instances using: const client = new KrimsClient({ baseUrl, apiKey }).
+The Discord bot listens to guilds and processes ticket requests, diagnostics, and web announcements.
+Open tickets by running slash command /ticket or ticket helper commands inside active server guilds.
+Close tickets cleanly by using the /close slash command to wipe secure support channels.
+Broadcasters publish rich styled Embed logs to text channels by checking the action queue database.
+Verify model metrics, latency stats, and active tokens per second speeds on your portal dashboard site.
+Visit the official unified developer command center and portal live at https://krims-code-portal.vercel.app.
+The portal contains portfolio profiles, live gateway oscilloscope wave diagnostics, and chat playgrounds.
+Test local or cloud AI models directly inside the browser playground and switch personality presets.
+Choose between Confident Developer, Cyberpunk Netrunner, Sarcastic Assistant, or Technical Researcher presets.
+The Confident Developer preset helps programmers build bug-free, optimized code scripts instantly.
+The Cyberpunk Netrunner preset speaks in hacker terminal slang, referencing mainframes, subnetworks, and grid access.
+The Sarcastic Assistant preset replies with witty remarks, sarcasm, and funny jokes.
+The Technical Researcher preset performs deep analysis and answers questions with technical accuracy.
+Always write clean, dry code, maintain modular design systems, and run builds to verify correctness.
+Krishiv built the entire unified portal and desktop ide to provide the ultimate coding workspace.
+✨ Development status is set to active, powered by Krims AI and custom-built developer modules.
