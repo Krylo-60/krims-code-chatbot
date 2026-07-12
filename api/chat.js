@@ -298,6 +298,22 @@ export default async function handler(req, res) {
       }
     }
     
+    // Fallback default config if DB fetch fails or guild is different
+    const saved = guildConfigs[guildId] || {
+      prefix: '!',
+      aiEnabled: true,
+      ticketsEnabled: false,
+      model: 'gemini',
+      sysPrompt: 'You are the Krims Code AI, built and custom-trained by the genius developer Krishiv. Answer coding queries with clear instructions and a friendly, confident tone.',
+      welcomeChannel: 'none',
+      welcomeMessage: 'Welcome to the server, {user}!',
+      customCommands: [],
+      openTickets: []
+    };
+    res.status(200).json(saved);
+    return;
+  }
+
   if (action === 'update_server_stats') {
     if (!guildId) {
       res.status(400).json({ error: 'guildId is required' });
@@ -364,21 +380,6 @@ export default async function handler(req, res) {
       }
     }
     res.status(500).json({ error: 'Failed to queue action' });
-    return;
-  }
-
-  const saved = guildConfigs[guildId] || {
-      prefix: '!',
-      aiEnabled: true,
-      ticketsEnabled: false,
-      model: 'gemini',
-      sysPrompt: 'You are the Krims Code AI, built and custom-trained by the genius developer Krishiv. Answer coding queries with clear instructions and a friendly, confident tone.',
-      welcomeChannel: 'none',
-      welcomeMessage: 'Welcome to the server, {user}!',
-      customCommands: [],
-      openTickets: []
-    };
-    res.status(200).json(saved);
     return;
   }
 
