@@ -383,14 +383,14 @@ export default async function handler(req, res) {
     return;
   }
 
-  if (action === 'create_verification_code') {
+  if (action === 'request_verification') {
     if (!guildId) {
       res.status(400).json({ error: 'guildId is required' });
       return;
     }
-    const { code, uuid, name } = req.body || {};
-    if (!code || !uuid || !name) {
-      res.status(400).json({ error: 'code, uuid, and name are required' });
+    const { name, discordUserId } = req.body || {};
+    if (!name || !discordUserId) {
+      res.status(400).json({ error: 'name and discordUserId are required' });
       return;
     }
     
@@ -402,18 +402,19 @@ export default async function handler(req, res) {
           const currentConfig = dbData.data || {};
           currentConfig.pendingVerifications = currentConfig.pendingVerifications || {};
           
-          // Cleanup expired codes (older than 10 mins)
+          // Cleanup old verifications (older than 30 mins)
           const now = Date.now();
           for (const [k, v] of Object.entries(currentConfig.pendingVerifications)) {
-            if (now - v.timestamp > 10 * 60 * 1000) {
+            if (now - v.timestamp > 30 * 60 * 1000) {
               delete currentConfig.pendingVerifications[k];
             }
           }
           
-          // Add new code
-          currentConfig.pendingVerifications[code] = {
-            uuid,
-            name,
+          // Add/Overwrite pending link request
+          currentConfig.pendingVerifications[name.toLowerCase().trim()] = {
+            name: name.trim(),
+            discordUserId,
+            code: null,
             timestamp: now
           };
           
@@ -425,18 +426,73 @@ export default async function handler(req, res) {
               data: currentConfig
             })
           });
-          res.status(200).json({ ok: true, message: 'Verification code created successfully' });
+          res.status(200).json({ ok: true, message: 'Verification requested successfully' });
           return;
         }
       } catch (err) {
-        console.error("Failed to create verification code in DB:", err);
+        console.error("Failed to request verification in DB:", err);
       }
     }
-    res.status(500).json({ error: 'Failed to save verification code' });
+    res.status(500).json({ error: 'Failed to request verification' });
     return;
   }
 
-  if (action === 'confirm_verification') {
+  if (action === 'check_join_verification') {
+    if (!guildId) {
+      res.status(400).json({ error: 'guildId is required' });
+      return;
+    }
+    const { name } = req.body || {};
+    if (!name) {
+      res.status(400).json({ error: 'name is required' });
+      return;
+    }
+    
+    if (guildId === '1420991845546332162') {
+      try {
+        const dbRes = await fetch('https://api.restful-api.dev/objects/ff8081819d82fab6019f3d7966d42bd0');
+        if (dbRes.ok) {
+          const dbData = await dbRes.json();
+          const currentConfig = dbData.data || {};
+          currentConfig.pendingVerifications = currentConfig.pendingVerifications || {};
+          
+          const key = name.toLowerCase().trim();
+          const pending = currentConfig.pendingVerifications[key];
+          if (pending) {
+            // Generate a 5-digit verification code
+            const CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+            let code = "";
+            for (let i = 0; i < 5; i++) {
+              code += CHARS.charAt(Math.floor(Math.random() * CHARS.length));
+            }
+            
+            pending.code = code;
+            pending.timestamp = Date.now(); // Reset expiry timer
+            
+            await fetch('https://api.restful-api.dev/objects/ff8081819d82fab6019f3d7966d42bd0', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                name: 'KrimsConfig_1420991845546332162',
+                data: currentConfig
+              })
+            });
+            res.status(200).json({ pending: true, code });
+            return;
+          } else {
+            res.status(200).json({ pending: false });
+            return;
+          }
+        }
+      } catch (err) {
+        console.error("Failed to check join verification in DB:", err);
+      }
+    }
+    res.status(500).json({ error: 'Failed to check join verification' });
+    return;
+  }
+
+  if (action === 'confirm_verification_code') {
     if (!guildId) {
       res.status(400).json({ error: 'guildId is required' });
       return;
@@ -456,24 +512,35 @@ export default async function handler(req, res) {
           currentConfig.pendingVerifications = currentConfig.pendingVerifications || {};
           currentConfig.verifiedPlayers = currentConfig.verifiedPlayers || {};
           
-          const pending = currentConfig.pendingVerifications[code];
-          if (pending) {
+          // Find matching code for this Discord User
+          let matchedKey = null;
+          let matchedEntry = null;
+          
+          const searchCode = code.toUpperCase().trim();
+          for (const [k, v] of Object.entries(currentConfig.pendingVerifications)) {
+            if (v.discordUserId === discordUserId && v.code === searchCode) {
+              matchedKey = k;
+              matchedEntry = v;
+              break;
+            }
+          }
+          
+          if (matchedEntry) {
             const now = Date.now();
-            if (now - pending.timestamp > 10 * 60 * 1000) {
-              delete currentConfig.pendingVerifications[code];
+            if (now - matchedEntry.timestamp > 15 * 60 * 1000) {
+              delete currentConfig.pendingVerifications[matchedKey];
               res.status(200).json({ ok: false, error: 'Verification code has expired' });
               return;
             }
             
             // Link player
             currentConfig.verifiedPlayers[discordUserId] = {
-              uuid: pending.uuid,
-              name: pending.name,
+              name: matchedEntry.name,
               timestamp: now
             };
             
-            // Delete code
-            delete currentConfig.pendingVerifications[code];
+            // Delete pending
+            delete currentConfig.pendingVerifications[matchedKey];
             
             await fetch('https://api.restful-api.dev/objects/ff8081819d82fab6019f3d7966d42bd0', {
               method: 'PUT',
@@ -484,18 +551,18 @@ export default async function handler(req, res) {
               })
             });
             
-            res.status(200).json({ ok: true, name: pending.name });
+            res.status(200).json({ ok: true, name: matchedEntry.name });
             return;
           } else {
-            res.status(200).json({ ok: false, error: 'Invalid verification code' });
+            res.status(200).json({ ok: false, error: 'Invalid verification code or code is for a different username' });
             return;
           }
         }
       } catch (err) {
-        console.error("Failed to confirm verification in DB:", err);
+        console.error("Failed to confirm code in DB:", err);
       }
     }
-    res.status(500).json({ error: 'Failed to process verification' });
+    res.status(500).json({ error: 'Failed to process confirmation' });
     return;
   }
 
