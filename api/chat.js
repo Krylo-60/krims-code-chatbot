@@ -383,6 +383,122 @@ export default async function handler(req, res) {
     return;
   }
 
+  if (action === 'create_verification_code') {
+    if (!guildId) {
+      res.status(400).json({ error: 'guildId is required' });
+      return;
+    }
+    const { code, uuid, name } = req.body || {};
+    if (!code || !uuid || !name) {
+      res.status(400).json({ error: 'code, uuid, and name are required' });
+      return;
+    }
+    
+    if (guildId === '1420991845546332162') {
+      try {
+        const dbRes = await fetch('https://api.restful-api.dev/objects/ff8081819d82fab6019f3d7966d42bd0');
+        if (dbRes.ok) {
+          const dbData = await dbRes.json();
+          const currentConfig = dbData.data || {};
+          currentConfig.pendingVerifications = currentConfig.pendingVerifications || {};
+          
+          // Cleanup expired codes (older than 10 mins)
+          const now = Date.now();
+          for (const [k, v] of Object.entries(currentConfig.pendingVerifications)) {
+            if (now - v.timestamp > 10 * 60 * 1000) {
+              delete currentConfig.pendingVerifications[k];
+            }
+          }
+          
+          // Add new code
+          currentConfig.pendingVerifications[code] = {
+            uuid,
+            name,
+            timestamp: now
+          };
+          
+          await fetch('https://api.restful-api.dev/objects/ff8081819d82fab6019f3d7966d42bd0', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name: 'KrimsConfig_1420991845546332162',
+              data: currentConfig
+            })
+          });
+          res.status(200).json({ ok: true, message: 'Verification code created successfully' });
+          return;
+        }
+      } catch (err) {
+        console.error("Failed to create verification code in DB:", err);
+      }
+    }
+    res.status(500).json({ error: 'Failed to save verification code' });
+    return;
+  }
+
+  if (action === 'confirm_verification') {
+    if (!guildId) {
+      res.status(400).json({ error: 'guildId is required' });
+      return;
+    }
+    const { code, discordUserId } = req.body || {};
+    if (!code || !discordUserId) {
+      res.status(400).json({ error: 'code and discordUserId are required' });
+      return;
+    }
+    
+    if (guildId === '1420991845546332162') {
+      try {
+        const dbRes = await fetch('https://api.restful-api.dev/objects/ff8081819d82fab6019f3d7966d42bd0');
+        if (dbRes.ok) {
+          const dbData = await dbRes.json();
+          const currentConfig = dbData.data || {};
+          currentConfig.pendingVerifications = currentConfig.pendingVerifications || {};
+          currentConfig.verifiedPlayers = currentConfig.verifiedPlayers || {};
+          
+          const pending = currentConfig.pendingVerifications[code];
+          if (pending) {
+            const now = Date.now();
+            if (now - pending.timestamp > 10 * 60 * 1000) {
+              delete currentConfig.pendingVerifications[code];
+              res.status(200).json({ ok: false, error: 'Verification code has expired' });
+              return;
+            }
+            
+            // Link player
+            currentConfig.verifiedPlayers[discordUserId] = {
+              uuid: pending.uuid,
+              name: pending.name,
+              timestamp: now
+            };
+            
+            // Delete code
+            delete currentConfig.pendingVerifications[code];
+            
+            await fetch('https://api.restful-api.dev/objects/ff8081819d82fab6019f3d7966d42bd0', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                name: 'KrimsConfig_1420991845546332162',
+                data: currentConfig
+              })
+            });
+            
+            res.status(200).json({ ok: true, name: pending.name });
+            return;
+          } else {
+            res.status(200).json({ ok: false, error: 'Invalid verification code' });
+            return;
+          }
+        }
+      } catch (err) {
+        console.error("Failed to confirm verification in DB:", err);
+      }
+    }
+    res.status(500).json({ error: 'Failed to process verification' });
+    return;
+  }
+
   const { prompt, model, systemInstruction, temperature, maxTokens, history } = req.body || {};
   if (!prompt) {
     res.status(400).json({ ok: false, error: 'Prompt is required' });
