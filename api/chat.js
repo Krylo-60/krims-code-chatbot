@@ -455,8 +455,25 @@ export default async function handler(req, res) {
           const dbData = await dbRes.json();
           const currentConfig = dbData.data || {};
           currentConfig.pendingVerifications = currentConfig.pendingVerifications || {};
+          currentConfig.verifiedPlayers = currentConfig.verifiedPlayers || {};
           
           const key = name.toLowerCase().trim();
+          
+          // 1. Check if already verified
+          let isVerified = false;
+          for (const [, v] of Object.entries(currentConfig.verifiedPlayers)) {
+            if (v.name && v.name.toLowerCase().trim() === key) {
+              isVerified = true;
+              break;
+            }
+          }
+          
+          if (isVerified) {
+            res.status(200).json({ verified: true, pending: false });
+            return;
+          }
+          
+          // 2. Check if pending request
           const pending = currentConfig.pendingVerifications[key];
           if (pending) {
             // Generate a 5-digit verification code
@@ -477,10 +494,10 @@ export default async function handler(req, res) {
                 data: currentConfig
               })
             });
-            res.status(200).json({ pending: true, code });
+            res.status(200).json({ verified: false, pending: true, code });
             return;
           } else {
-            res.status(200).json({ pending: false });
+            res.status(200).json({ verified: false, pending: false });
             return;
           }
         }
