@@ -631,11 +631,9 @@ export default async function handler(req, res) {
   let activeEngine = model || 'krims-local';
 
   try {
-    if (activeEngine === 'gemini' || activeEngine === 'google') {
+    const tryGemini = async () => {
       const apiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY;
-      if (!apiKey) {
-        throw new Error("GOOGLE_API_KEY or GEMINI_API_KEY is missing from environment variables.");
-      }
+      if (!apiKey) throw new Error("GOOGLE_API_KEY or GEMINI_API_KEY is missing from environment variables.");
       const sdkClient = new KrimsClient({
         provider: 'google',
         apiKey,
@@ -647,12 +645,12 @@ export default async function handler(req, res) {
         maxTokens,
         history
       });
-      responseText = sdkRes.response;
-    } else if (activeEngine === 'groq') {
+      return sdkRes.response;
+    };
+
+    const tryGroq = async () => {
       const apiKey = process.env.GROQ_API_KEY;
-      if (!apiKey) {
-        throw new Error("GROQ_API_KEY is missing from environment variables.");
-      }
+      if (!apiKey) throw new Error("GROQ_API_KEY is missing from environment variables.");
       const sdkClient = new KrimsClient({
         provider: 'groq',
         apiKey
@@ -663,7 +661,33 @@ export default async function handler(req, res) {
         maxTokens,
         history
       });
-      responseText = sdkRes.response;
+      return sdkRes.response;
+    };
+
+    if (activeEngine === 'gemini' || activeEngine === 'google') {
+      try {
+        responseText = await tryGemini();
+      } catch (geminiErr) {
+        console.warn("[AI Engine] Gemini failed, trying Groq fallback...", geminiErr.message);
+        try {
+          responseText = await tryGroq();
+          responseText += "\n\n*(Note: Gemini failed, automatically routed through Groq)*";
+        } catch (fallbackErr) {
+          throw new Error(`Both Gemini and Groq engines failed: ${geminiErr.message} / ${fallbackErr.message}`);
+        }
+      }
+    } else if (activeEngine === 'groq') {
+      try {
+        responseText = await tryGroq();
+      } catch (groqErr) {
+        console.warn("[AI Engine] Groq failed, trying Gemini fallback...", groqErr.message);
+        try {
+          responseText = await tryGemini();
+          responseText += "\n\n*(Note: Groq failed, automatically routed through Gemini)*";
+        } catch (fallbackErr) {
+          throw new Error(`Both Groq and Gemini engines failed: ${groqErr.message} / ${fallbackErr.message}`);
+        }
+      }
     } else if (activeEngine === 'grok' || activeEngine === 'xai') {
       const apiKey = process.env.XAI_API_KEY;
       if (!apiKey) {
