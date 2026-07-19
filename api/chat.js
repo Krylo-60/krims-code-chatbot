@@ -542,7 +542,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  if (action === 'confirm_verification_code') {
+  if (action === 'confirm_verification_code' || action === 'confirm_verification') {
     if (!guildId) {
       res.status(400).json({ error: 'guildId is required' });
       return;
