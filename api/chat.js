@@ -379,8 +379,14 @@ export default async function handler(req, res) {
       verifiedCartItems.push({ id: itemId, name, price });
     });
 
-    const discountAmount = subtotal * (discountPercentage / 100);
-    const finalTotal = Math.max(0, Math.round(subtotal - discountAmount));
+    const discountAmount = Math.round(subtotal * (discountPercentage / 100));
+    const discountedSubtotal = subtotal - discountAmount;
+    
+    // Apply tax rate (5% for Buy All bundle, 3% for standard items)
+    const isUltimate = cart.includes('krylo-ultimate-bundle');
+    const taxRate = isUltimate ? 0.05 : 0.03;
+    const taxAmount = Math.round(discountedSubtotal * taxRate);
+    const finalTotal = Math.max(0, Math.round(discountedSubtotal + taxAmount));
 
     // Economy check
     currentConfig.economyData = currentConfig.economyData || {};
@@ -396,8 +402,13 @@ export default async function handler(req, res) {
       return;
     }
 
-    // Deduct balance
+    // Deduct balance from player
     playerEco.balance = currentBalance - finalTotal;
+
+    // Credit tax amount directly to server owner's account (username: Krylo)
+    currentConfig.economyData['Krylo'] = currentConfig.economyData['Krylo'] || { balance: 0 };
+    currentConfig.economyData['Krylo'].balance = (currentConfig.economyData['Krylo'].balance || 0) + taxAmount;
+    console.log(`[Store API] Transferred ${taxAmount} KC tax to owner (Krylo). New owner balance: ${currentConfig.economyData['Krylo'].balance} KC.`);
 
     // Queue commands
     currentConfig.pendingCommands = currentConfig.pendingCommands || [];
