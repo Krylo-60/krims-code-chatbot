@@ -450,6 +450,31 @@ export default async function handler(req, res) {
       });
     }
 
+    // Log transaction to SheetDB Google Sheet
+    try {
+      const sheetItemsStr = verifiedCartItems.map(item => `${item.name} (${item.price} KC)`).join(', ');
+      fetch('https://sheetdb.io/api/v1/wqiphi0bug49j', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          data: [
+            {
+              date: new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }),
+              username: username,
+              discord_id: discordUserId || 'N/A',
+              items: sheetItemsStr,
+              final_total: finalTotal,
+              promo_code: promoCode || 'None',
+              tax_amount: taxAmount,
+              client_ip: clientIp || 'Unknown'
+            }
+          ]
+        })
+      }).catch(err => console.error("SheetDB log failed in background:", err.message));
+    } catch (err) {
+      console.error("Failed to construct SheetDB log:", err.message);
+    }
+
     // Save back updated config (with 3-second timeout protection)
     if (guildId === '1420991845546332162' || guildId === '1524878881918685405') {
       try {
