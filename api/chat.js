@@ -664,6 +664,8 @@ export default async function handler(req, res) {
       return sdkRes.response;
     };
 
+    let failoverDetails = null;
+
     if (activeEngine === 'gemini' || activeEngine === 'google') {
       try {
         responseText = await tryGemini();
@@ -671,7 +673,7 @@ export default async function handler(req, res) {
         console.warn("[AI Engine] Gemini failed, trying Groq fallback...", geminiErr.message);
         try {
           responseText = await tryGroq();
-          responseText += "\n\n*(Note: Gemini failed, automatically routed through Groq)*";
+          failoverDetails = { from: 'Gemini', to: 'Groq', error: geminiErr.message };
         } catch (fallbackErr) {
           throw new Error(`Both Gemini and Groq engines failed: ${geminiErr.message} / ${fallbackErr.message}`);
         }
@@ -683,7 +685,7 @@ export default async function handler(req, res) {
         console.warn("[AI Engine] Groq failed, trying Gemini fallback...", groqErr.message);
         try {
           responseText = await tryGemini();
-          responseText += "\n\n*(Note: Groq failed, automatically routed through Gemini)*";
+          failoverDetails = { from: 'Groq', to: 'Gemini', error: groqErr.message };
         } catch (fallbackErr) {
           throw new Error(`Both Groq and Gemini engines failed: ${groqErr.message} / ${fallbackErr.message}`);
         }
@@ -726,6 +728,7 @@ export default async function handler(req, res) {
       ok: true,
       prompt,
       response: responseText,
+      failover: failoverDetails,
       stats: {
         latency: `${durationSec}s`,
         tokensPerSec: `${speed} tok/s`
