@@ -337,7 +337,7 @@ export default async function handler(req, res) {
     };
 
     const getPrice = (id) => {
-      if (id === 'krylo-ultimate-bundle') return 243196;
+      if (id === 'krylo-ultimate-bundle') return 226983;
       if (productsMap[id]) return productsMap[id].price;
       if (id.includes('-key-x')) {
         const parts = id.split('-key-x');
