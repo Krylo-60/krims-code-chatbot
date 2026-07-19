@@ -347,6 +347,39 @@ export default async function handler(req, res) {
     res.status(500).json({ error: 'Failed to update stats' });
     return;
   }
+  if (action === 'update_xp_data') {
+    if (!guildId) {
+      res.status(400).json({ error: 'guildId is required' });
+      return;
+    }
+    const { xpData } = req.body || {};
+    
+    if (guildId === '1420991845546332162' || guildId === '1524878881918685405') {
+      try {
+        const dbRes = await fetch('https://api.restful-api.dev/objects/ff8081819d82fab6019f3d7966d42bd0');
+        if (dbRes.ok) {
+          const dbData = await dbRes.json();
+          const currentConfig = dbData.data || {};
+          currentConfig.xpData = xpData;
+
+          await fetch('https://api.restful-api.dev/objects/ff8081819d82fab6019f3d7966d42bd0', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name: 'KrimsConfig_1420991845546332162',
+              data: currentConfig
+            })
+          });
+          res.status(200).json({ ok: true, message: 'XP data updated successfully' });
+          return;
+        }
+      } catch (err) {
+        console.error("Failed to update XP data:", err);
+      }
+    }
+    res.status(500).json({ error: 'Failed to update XP data' });
+    return;
+  }
 
   if (action === 'add_broadcast_action') {
     if (!guildId) {
