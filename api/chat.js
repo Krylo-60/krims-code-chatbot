@@ -220,6 +220,50 @@ export default async function handler(req, res) {
     'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
   );
 
+  const loadConfig = async (gId) => {
+    let cfg = guildConfigs[gId] || {};
+    if (gId === '1420991845546332162' || gId === '1524878881918685405') {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000);
+        const dbRes = await fetch('https://api.restful-api.dev/objects/ff8081819d82fab6019f3d7966d42bd0', { signal: controller.signal });
+        clearTimeout(timeoutId);
+        if (dbRes.ok) {
+          const dbData = await dbRes.json();
+          if (dbData && dbData.data) {
+            cfg = dbData.data;
+            guildConfigs[gId] = cfg;
+          }
+        }
+      } catch (err) {
+        console.warn("Failed to load config from database (using cache):", err.message);
+      }
+    }
+    return cfg;
+  };
+
+  const saveConfig = async (gId, cfg) => {
+    guildConfigs[gId] = cfg;
+    if (gId === '1420991845546332162' || gId === '1524878881918685405') {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000);
+        await fetch('https://api.restful-api.dev/objects/ff8081819d82fab6019f3d7966d42bd0', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: 'KrimsConfig_1420991845546332162',
+            data: cfg
+          }),
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+      } catch (err) {
+        console.warn("Failed to save config to database (cache updated):", err.message);
+      }
+    }
+  };
+
   if (req.method === 'OPTIONS') {
     res.status(200).end();
     return;
@@ -537,36 +581,14 @@ export default async function handler(req, res) {
       res.status(400).json({ error: 'guildId is required' });
       return;
     }
-    
-    // Retrieve from persistent database for the active guild
-    if (guildId === '1420991845546332162' || guildId === '1524878881918685405') {
-      try {
-        const dbRes = await fetch('https://api.restful-api.dev/objects/ff8081819d82fab6019f3d7966d42bd0');
-        if (dbRes.ok) {
-          const dbData = await dbRes.json();
-          if (dbData && dbData.data) {
-            res.status(200).json(dbData.data);
-            return;
-          }
-        }
-      } catch (err) {
-        console.error("Failed to load from restful-api:", err);
-      }
+    try {
+      const configData = await loadConfig(guildId);
+      res.status(200).json(configData);
+      return;
+    } catch (err) {
+      console.error("Failed to load from restful-api:", err.message);
     }
-    
-    // Fallback default config if DB fetch fails or guild is different
-    const saved = guildConfigs[guildId] || {
-      prefix: '!',
-      aiEnabled: true,
-      ticketsEnabled: false,
-      model: 'gemini',
-      sysPrompt: 'You are the Krims Code AI, built and custom-trained by the genius developer Krishiv. Answer coding queries with clear instructions and a friendly, confident tone.',
-      welcomeChannel: 'none',
-      welcomeMessage: 'Welcome to the server, {user}!',
-      customCommands: [],
-      openTickets: []
-    };
-    res.status(200).json(saved);
+    res.status(200).json(guildConfigs[guildId] || {});
     return;
   }
 
@@ -685,41 +707,30 @@ export default async function handler(req, res) {
     
     if (guildId === '1420991845546332162' || guildId === '1524878881918685405') {
       try {
-        const dbRes = await fetch('https://api.restful-api.dev/objects/ff8081819d82fab6019f3d7966d42bd0');
-        if (dbRes.ok) {
-          const dbData = await dbRes.json();
-          const currentConfig = dbData.data || {};
-          currentConfig.pendingVerifications = currentConfig.pendingVerifications || {};
-          
-          // Cleanup old verifications (older than 30 mins)
-          const now = Date.now();
-          for (const [k, v] of Object.entries(currentConfig.pendingVerifications)) {
-            if (now - v.timestamp > 30 * 60 * 1000) {
-              delete currentConfig.pendingVerifications[k];
-            }
+        const currentConfig = await loadConfig(guildId);
+        currentConfig.pendingVerifications = currentConfig.pendingVerifications || {};
+        
+        // Cleanup old verifications (older than 30 mins)
+        const now = Date.now();
+        for (const [k, v] of Object.entries(currentConfig.pendingVerifications)) {
+          if (v && (now - v.timestamp > 30 * 60 * 1000)) {
+            delete currentConfig.pendingVerifications[k];
           }
-          
-          // Add/Overwrite pending link request
-          currentConfig.pendingVerifications[name.toLowerCase().trim()] = {
-            name: name.trim(),
-            discordUserId,
-            code: null,
-            timestamp: now
-          };
-          
-          await fetch('https://api.restful-api.dev/objects/ff8081819d82fab6019f3d7966d42bd0', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              name: 'KrimsConfig_1420991845546332162',
-              data: currentConfig
-            })
-          });
-          res.status(200).json({ ok: true, message: 'Verification requested successfully' });
-          return;
         }
+        
+        // Add/Overwrite pending link request
+        currentConfig.pendingVerifications[name.toLowerCase().trim()] = {
+          name: name.trim(),
+          discordUserId,
+          code: null,
+          timestamp: now
+        };
+        
+        await saveConfig(guildId, currentConfig);
+        res.status(200).json({ ok: true, message: 'Verification requested successfully' });
+        return;
       } catch (err) {
-        console.error("Failed to request verification in DB:", err);
+        console.error("Failed to request verification in DB:", err.message);
       }
     }
     res.status(500).json({ error: 'Failed to request verification' });
