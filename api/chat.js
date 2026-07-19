@@ -1,9 +1,6 @@
 import path from 'path';
 import fs from 'fs';
 import { KrimsClient } from '@krishivpb60/krims-code-sdk';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 // Cached AI Database variables (persisted across warm invocations)
 let trainingText = '';
