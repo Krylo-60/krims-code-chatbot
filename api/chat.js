@@ -259,11 +259,14 @@ export default async function handler(req, res) {
       clientIp = clientIp.split(',')[0].trim();
     }
 
-    // Load Config
+    // Load Config (with 3-second timeout protection)
     let currentConfig = guildConfigs[guildId] || {};
     if (guildId === '1420991845546332162' || guildId === '1524878881918685405') {
       try {
-        const dbRes = await fetch('https://api.restful-api.dev/objects/ff8081819d82fab6019f3d7966d42bd0');
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000);
+        const dbRes = await fetch('https://api.restful-api.dev/objects/ff8081819d82fab6019f3d7966d42bd0', { signal: controller.signal });
+        clearTimeout(timeoutId);
         if (dbRes.ok) {
           const dbData = await dbRes.json();
           if (dbData && dbData.data) {
@@ -272,7 +275,7 @@ export default async function handler(req, res) {
           }
         }
       } catch (err) {
-        console.error("Failed to load config from database for checkout:", err);
+        console.error("Failed to load config from database for checkout (using cache):", err.message);
       }
     }
 
@@ -334,6 +337,7 @@ export default async function handler(req, res) {
     };
 
     const getPrice = (id) => {
+      if (id === 'krylo-ultimate-bundle') return 243196;
       if (productsMap[id]) return productsMap[id].price;
       if (id.includes('-key-x')) {
         const parts = id.split('-key-x');
@@ -400,7 +404,14 @@ export default async function handler(req, res) {
     verifiedCartItems.forEach(item => {
       const pId = item.id;
       let command = '';
-      if (pId.endsWith('-rank')) {
+      if (pId === 'krylo-ultimate-bundle') {
+        command = `lp user ${username} parent set antigravity`;
+        currentConfig.pendingCommands.push(`crate key give ${username} seasonal 50`);
+        currentConfig.pendingCommands.push(`crate key give ${username} mythic 50`);
+        currentConfig.pendingCommands.push(`crate key give ${username} legendary 50`);
+        currentConfig.pendingCommands.push(`aura give ${username} all`);
+        currentConfig.pendingCommands.push(`tags give ${username} all`);
+      } else if (pId.endsWith('-rank')) {
         command = `lp user ${username} parent set ${pId.replace('-rank', '')}`;
       } else if (pId.includes('-key-x')) {
         const parts = pId.split('-key-x');
@@ -428,19 +439,23 @@ export default async function handler(req, res) {
       });
     }
 
-    // Save back updated config
+    // Save back updated config (with 3-second timeout protection)
     if (guildId === '1420991845546332162' || guildId === '1524878881918685405') {
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000);
         await fetch('https://api.restful-api.dev/objects/ff8081819d82fab6019f3d7966d42bd0', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             name: 'KrimsConfig_1420991845546332162',
             data: currentConfig
-          })
+          }),
+          signal: controller.signal
         });
+        clearTimeout(timeoutId);
       } catch (err) {
-        console.error("Failed to save config to database during checkout:", err);
+        console.error("Failed to save config to database during checkout:", err.message);
       }
     }
 
