@@ -246,6 +246,214 @@ export default async function handler(req, res) {
 
   const { action, guildId, config } = req.body || {};
 
+  if (action === 'checkout') {
+    const { username, discordUserId, cart, promoCode } = req.body || {};
+    if (!username || !cart || cart.length === 0) {
+      res.status(400).json({ error: 'Missing checkout parameters' });
+      return;
+    }
+
+    // Get Client IP
+    let clientIp = req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || req.socket?.remoteAddress || '';
+    if (clientIp.includes(',')) {
+      clientIp = clientIp.split(',')[0].trim();
+    }
+
+    // Load Config
+    let currentConfig = guildConfigs[guildId] || {};
+    if (guildId === '1420991845546332162' || guildId === '1524878881918685405') {
+      try {
+        const dbRes = await fetch('https://api.restful-api.dev/objects/ff8081819d82fab6019f3d7966d42bd0');
+        if (dbRes.ok) {
+          const dbData = await dbRes.json();
+          if (dbData && dbData.data) {
+            currentConfig = dbData.data;
+            guildConfigs[guildId] = currentConfig;
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load config from database for checkout:", err);
+      }
+    }
+
+    let discountPercentage = 0;
+    const activeCodes = ['KRYLO', 'KRYLOSMP', 'KRISHIV', 'WELCOMESMP'];
+
+    if (promoCode) {
+      const formattedCode = promoCode.trim().toUpperCase();
+      if (activeCodes.includes(formattedCode)) {
+        // 1. VPN Check
+        if (clientIp && clientIp !== '127.0.0.1' && clientIp !== '::1') {
+          try {
+            const ipRes = await fetch(`https://ipwho.is/${clientIp}`);
+            if (ipRes.ok) {
+              const ipData = await ipRes.json();
+              if (ipData.type === 'hosting' || ipData.security?.vpn || ipData.security?.proxy) {
+                res.status(400).json({ error: 'VPN or proxy connections are not allowed to redeem promo codes!' });
+                return;
+              }
+            }
+          } catch (err) {
+            console.error("VPN check failed:", err.message);
+          }
+        }
+
+        // 2. IP Claim Check
+        currentConfig.usedPromoIps = currentConfig.usedPromoIps || {};
+        if (clientIp && currentConfig.usedPromoIps[clientIp]) {
+          res.status(400).json({ error: 'This IP has already redeemed a promo code!' });
+          return;
+        }
+
+        discountPercentage = 20;
+        if (clientIp) {
+          currentConfig.usedPromoIps[clientIp] = {
+            username,
+            code: formattedCode,
+            timestamp: Date.now()
+          };
+        }
+      } else {
+        res.status(400).json({ error: 'Invalid promo code' });
+        return;
+      }
+    }
+
+    // Dynamic price calculation
+    const productsMap = {
+      'vip-rank': { name: 'VIP Rank', price: 500 },
+      'mvp-rank': { name: 'MVP Rank', price: 1000 },
+      'legend-rank': { name: 'Legend Rank', price: 2500 },
+      'titan-rank': { name: 'Titan Rank', price: 5000 },
+      'champion-rank': { name: 'Champion Rank', price: 7500 },
+      'elite-rank': { name: 'Elite Rank', price: 10000 },
+      'overlord-rank': { name: 'Overlord Rank', price: 15000 },
+      'god-rank': { name: 'God Rank', price: 25000 },
+      'immortal-rank': { name: 'Immortal Rank', price: 50000 },
+      'antigravity-rank': { name: 'Antigravity Rank', price: 100000 }
+    };
+
+    const getPrice = (id) => {
+      if (productsMap[id]) return productsMap[id].price;
+      if (id.includes('-key-x')) {
+        const parts = id.split('-key-x');
+        const basePrice = parts[0] === 'seasonal' ? 60 : (parts[0] === 'mythic' ? 100 : 200);
+        const b = parseInt(parts[1]);
+        return Math.round(basePrice * b * (1 - (b > 1 ? (b > 10 ? 0.25 : 0.15) : 0)));
+      }
+      if (id.endsWith('-trail')) return 250;
+      if (id.endsWith('-aura')) return 500;
+      if (id.startsWith('tag-')) {
+        const suffix = id.replace('tag-', '');
+        const tagsList = [
+          'Rich', 'SWEAT', 'Tryhard', 'Pro', 'Noob', 'PvP-God', 'Grinder', 'Merchant', 'Builder', 
+          'Farmer', 'Slayer', 'Clown', 'Toxic', 'VIP+', 'MVP+', 'Legend+', 'Challenger', 'Gladiator', 
+          'Hunter', 'Miner', 'Explorer', 'Smuggler', 'Warlord', 'Sorcerer', 'Healer', 'Knight', 
+          'King', 'Queen', 'Emperor', 'Lord', 'Duke', 'Baron', 'Count', 'Paladin', 'Rogue', 
+          'Mage', 'Assassin', 'Ninja', 'Samurai', 'Shogun', 'Sensei', 'Guru', 'Master', 'Elder', 
+          'Sage', 'Monk', 'Wizard', 'Warlock', 'Necromancer', 'Alchemist'
+        ];
+        const idx = tagsList.findIndex(t => t.toLowerCase() === suffix);
+        return (idx !== -1 && idx % 5 === 0) ? 300 : 150;
+      }
+      return 0;
+    };
+
+    let subtotal = 0;
+    const verifiedCartItems = [];
+    cart.forEach(itemId => {
+      const price = getPrice(itemId);
+      subtotal += price;
+      
+      let name = itemId;
+      if (productsMap[itemId]) name = productsMap[itemId].name;
+      else if (itemId.includes('-key-x')) name = `${itemId.split('-key-x')[1]}x ${itemId.split('-key-x')[0]} Crate Keys`;
+      else if (itemId.endsWith('-trail')) name = `${itemId.split('-')[0].charAt(0).toUpperCase() + itemId.split('-')[0].slice(1)} Trail`;
+      else if (itemId.endsWith('-aura')) name = `${itemId.split('-')[0].charAt(0).toUpperCase() + itemId.split('-')[0].slice(1)} Aura`;
+      else if (itemId.startsWith('tag-')) name = `Chat Tag: [${itemId.replace('tag-', '').toUpperCase()}]`;
+
+      verifiedCartItems.push({ id: itemId, name, price });
+    });
+
+    const discountAmount = subtotal * (discountPercentage / 100);
+    const finalTotal = Math.max(0, Math.round(subtotal - discountAmount));
+
+    // Economy check
+    currentConfig.economyData = currentConfig.economyData || {};
+    const playerEco = currentConfig.economyData[username];
+    if (!playerEco) {
+      res.status(400).json({ error: 'Player profile not found. Please register or join the Minecraft server first!' });
+      return;
+    }
+
+    const currentBalance = playerEco.balance || 0;
+    if (currentBalance < finalTotal) {
+      res.status(400).json({ error: `Insufficient Krylo Coins! Need ${finalTotal} KC, but you only have ${currentBalance} KC.` });
+      return;
+    }
+
+    // Deduct balance
+    playerEco.balance = currentBalance - finalTotal;
+
+    // Queue commands
+    currentConfig.pendingCommands = currentConfig.pendingCommands || [];
+    verifiedCartItems.forEach(item => {
+      const pId = item.id;
+      let command = '';
+      if (pId.endsWith('-rank')) {
+        command = `lp user ${username} parent set ${pId.replace('-rank', '')}`;
+      } else if (pId.includes('-key-x')) {
+        const parts = pId.split('-key-x');
+        command = `crate key give ${username} ${parts[0]} ${parts[1]}`;
+      } else if (pId.endsWith('-trail') || pId.endsWith('-aura')) {
+        command = `aura give ${username} ${pId.split('-')[0]}`;
+      } else if (pId.startsWith('tag-')) {
+        command = `tags give ${username} ${pId.replace('tag-', '')}`;
+      }
+
+      if (command) {
+        currentConfig.pendingCommands.push(command);
+      }
+    });
+
+    // Queue Discord DM confirmation
+    if (discordUserId) {
+      currentConfig.actions = currentConfig.actions || [];
+      currentConfig.actions.push({
+        type: 'send_dm',
+        discordUserId: discordUserId,
+        title: '🛒 Purchase Delivered Successfully!',
+        description: `Hey **${username}**!\n\nYour purchase on the **KryloSMP Store** has been successfully processed and delivered in-game!\n\n**Items Delivered:**\n${verifiedCartItems.map(item => `• **${item.name}** (${item.price} KC)`).join('\n')}\n\n**Total Deducted:** ${finalTotal} KC (Discount applied: ${discountPercentage}%)\n\nThank you for supporting **KryloSMP**! 💖`,
+        color: '#00ff66'
+      });
+    }
+
+    // Save back updated config
+    if (guildId === '1420991845546332162' || guildId === '1524878881918685405') {
+      try {
+        await fetch('https://api.restful-api.dev/objects/ff8081819d82fab6019f3d7966d42bd0', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: 'KrimsConfig_1420991845546332162',
+            data: currentConfig
+          })
+        });
+      } catch (err) {
+        console.error("Failed to save config to database during checkout:", err);
+      }
+    }
+
+    guildConfigs[guildId] = currentConfig;
+
+    res.status(200).json({
+      ok: true,
+      newBalance: playerEco.balance,
+      finalTotal
+    });
+    return;
+  }
+
   if (action === 'save_config') {
     if (!guildId) {
       res.status(400).json({ error: 'guildId is required' });
