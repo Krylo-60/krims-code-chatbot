@@ -256,7 +256,7 @@ export default async function handler(req, res) {
     }
     
     // Save to persistent database for the active guild
-    if (guildId === '1420991845546332162') {
+    if (guildId === '1420991845546332162' || guildId === '1524878881918685405') {
       try {
         await fetch('https://api.restful-api.dev/objects/ff8081819d82fab6019f3d7966d42bd0', {
           method: 'PUT',
@@ -283,7 +283,7 @@ export default async function handler(req, res) {
     }
     
     // Retrieve from persistent database for the active guild
-    if (guildId === '1420991845546332162') {
+    if (guildId === '1420991845546332162' || guildId === '1524878881918685405') {
       try {
         const dbRes = await fetch('https://api.restful-api.dev/objects/ff8081819d82fab6019f3d7966d42bd0');
         if (dbRes.ok) {
@@ -321,7 +321,7 @@ export default async function handler(req, res) {
     }
     const { stats } = req.body || {};
     
-    if (guildId === '1420991845546332162') {
+    if (guildId === '1420991845546332162' || guildId === '1524878881918685405') {
       try {
         const dbRes = await fetch('https://api.restful-api.dev/objects/ff8081819d82fab6019f3d7966d42bd0');
         if (dbRes.ok) {
@@ -355,7 +355,7 @@ export default async function handler(req, res) {
     }
     const { embed } = req.body || {};
     
-    if (guildId === '1420991845546332162') {
+    if (guildId === '1420991845546332162' || guildId === '1524878881918685405') {
       try {
         const dbRes = await fetch('https://api.restful-api.dev/objects/ff8081819d82fab6019f3d7966d42bd0');
         if (dbRes.ok) {
@@ -394,7 +394,7 @@ export default async function handler(req, res) {
       return;
     }
     
-    if (guildId === '1420991845546332162') {
+    if (guildId === '1420991845546332162' || guildId === '1524878881918685405') {
       try {
         const dbRes = await fetch('https://api.restful-api.dev/objects/ff8081819d82fab6019f3d7966d42bd0');
         if (dbRes.ok) {
@@ -448,7 +448,7 @@ export default async function handler(req, res) {
       return;
     }
     
-    if (guildId === '1420991845546332162') {
+    if (guildId === '1420991845546332162' || guildId === '1524878881918685405') {
       try {
         const dbRes = await fetch('https://api.restful-api.dev/objects/ff8081819d82fab6019f3d7966d42bd0');
         if (dbRes.ok) {
@@ -520,7 +520,7 @@ export default async function handler(req, res) {
       return;
     }
     
-    if (guildId === '1420991845546332162') {
+    if (guildId === '1420991845546332162' || guildId === '1524878881918685405') {
       try {
         const dbRes = await fetch('https://api.restful-api.dev/objects/ff8081819d82fab6019f3d7966d42bd0');
         if (dbRes.ok) {
