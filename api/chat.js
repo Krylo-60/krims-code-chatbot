@@ -377,7 +377,7 @@ export default async function handler(req, res) {
       'overlord-rank': { name: 'Overlord Rank', price: 15000 },
       'god-rank': { name: 'God Rank', price: 25000 },
       'immortal-rank': { name: 'Immortal Rank', price: 50000 },
-      'antigravity-rank': { name: 'Antigravity Rank', price: 100000 }
+      'krylo-god-rank': { name: 'Krylo God Rank', price: 100000 }
     };
 
     const getPrice = (id) => {
@@ -460,7 +460,7 @@ export default async function handler(req, res) {
       const pId = item.id;
       let command = '';
       if (pId === 'krylo-ultimate-bundle') {
-        command = `lp user ${username} parent set antigravity`;
+        command = `lp user ${username} parent set krylo-god`;
         currentConfig.pendingCommands.push(`crate key give ${username} seasonal 50`);
         currentConfig.pendingCommands.push(`crate key give ${username} mythic 50`);
         currentConfig.pendingCommands.push(`crate key give ${username} legendary 50`);
