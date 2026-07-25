@@ -879,7 +879,7 @@ export default async function handler(req, res) {
         console.error("Failed to confirm code in DB:", err);
       }
     }
-    res.status(500).json({ error: 'Failed to process confirmation' });
+    res.status(200).json({ ok: false, error: 'Invalid or expired verification code. Make sure you joined KryloSmp.play.hosting in Minecraft to view your code!' });
     return;
   }
 
