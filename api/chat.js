@@ -576,6 +576,30 @@ export default async function handler(req, res) {
     return;
   }
 
+  
+  // 🚀 KRYLOSMP 2.0 MEGA UPDATE API ACTIONS
+  if (action === 'update_clan_data') {
+    const { clanData } = req.body || {};
+    if (guildId === '1420991845546332162' || guildId === '1524878881918685405') {
+      const cfg = await loadConfig(guildId);
+      cfg.clanData = clanData || {};
+      await saveConfig(guildId, cfg);
+      res.status(200).json({ ok: true, message: 'Clan data updated' });
+      return;
+    }
+  }
+
+  if (action === 'update_jackpot_pool') {
+    const { pool } = req.body || {};
+    if (guildId === '1420991845546332162' || guildId === '1524878881918685405') {
+      const cfg = await loadConfig(guildId);
+      cfg.jackpotPool = pool || 25000;
+      await saveConfig(guildId, cfg);
+      res.status(200).json({ ok: true, pool: cfg.jackpotPool });
+      return;
+    }
+  }
+
   if (action === 'get_config') {
     if (!guildId) {
       res.status(400).json({ error: 'guildId is required' });
