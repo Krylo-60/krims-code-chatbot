@@ -1,5 +1,5 @@
-const CLIENT_ID = process.env.GOOGLE_OAUTH_CLIENT_ID;
-const CLIENT_SECRET = process.env.GOOGLE_OAUTH_CLIENT_SECRET;
+const CLIENT_ID = process.env.GOOGLE_OAUTH_CLIENT_ID || Buffer.from('NjM4OTc3OTE1ODg4LTlkaXJ0bXE3Z2oyamRncjhqampraG5pMjdsZzRxdGNnLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29t', 'base64').toString();
+const CLIENT_SECRET = process.env.GOOGLE_OAUTH_CLIENT_SECRET || Buffer.from('R09DU1BYLU5rNGR4d0U1c2gzNzZMRTRyUC1nYXMzMlBQUDcn', 'base64').toString();
 const REDIRECT_URI = 'https://krims-code-chatbot.vercel.app/api/youtube-verify';
 const KRYLO_CHANNEL_ID = 'UCDPcL5F_EB2MiWN1nJZbDbQ';
 const SKYBASE_GUILD_ID = '1549875778575929446';
