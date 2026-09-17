@@ -9,7 +9,8 @@ const CLIENT_SECRET = rawSecret.trim().replace(/^['"]|['"]$/g, '');
 const REDIRECT_URI = 'https://krims-code-chatbot.vercel.app/api/youtube-verify';
 const KRYLO_CHANNEL_ID = 'UCDPcL5F_EB2MiWN1nJZbDbQ';
 const SKYBASE_GUILD_ID = '1549875778575929446';
-const SUB_ROLE_ID = '1549918001380331632';
+const SUB_ROLE_ID = '1549918001380331632'; // 🔴 Skybase • Subbed to Krylo
+const FAN_ROLE_ID = '1549916920629825686'; // ⭐ Skybase • Krylo Fan
 const DEFAULT_BOT_TOKEN = Buffer.from('TVRVeU16YzVORFEyTmpjME1ETTNNVFU0TmcuR3VoLUNBLmlaZTFpOTlqWWdlZnUwV0h2RXpNM2pPYmVqVWRzNmhoX2g0ME9N', 'base64').toString();
 
 export default async function handler(req, res) {
@@ -68,29 +69,33 @@ export default async function handler(req, res) {
     const isSubscribed = ytData.items && ytData.items.length > 0;
 
     if (!isSubscribed) {
-      return res.send(renderPage(false, 'You are not subscribed to Krylo on YouTube yet! Please subscribe to @krylomcyt and try verifying again.', true));
+      return res.send(renderPage(false, 'You are not subscribed to Krylo MC yet! Please subscribe to Krylo MC and try verifying again.', true));
     }
 
     const discordUserId = state;
-    let roleAssigned = false;
+    let rolesAssigned = false;
     const BOT_TOKEN = process.env.DISCORD_TOKEN || DEFAULT_BOT_TOKEN;
 
     if (discordUserId && BOT_TOKEN) {
       try {
-        const rRes = await fetch('https://discord.com/api/v10/guilds/' + SKYBASE_GUILD_ID + '/members/' + discordUserId + '/roles/' + SUB_ROLE_ID, {
-          method: 'PUT',
-          headers: {
-            Authorization: 'Bot ' + BOT_TOKEN,
-            'Content-Type': 'application/json'
-          }
-        });
-        roleAssigned = rRes.ok || rRes.status === 204;
+        // Assign both: 🔴 Skybase • Subbed to Krylo & ⭐ Skybase • Krylo Fan
+        await Promise.all([
+          fetch('https://discord.com/api/v10/guilds/' + SKYBASE_GUILD_ID + '/members/' + discordUserId + '/roles/' + SUB_ROLE_ID, {
+            method: 'PUT',
+            headers: { Authorization: 'Bot ' + BOT_TOKEN }
+          }),
+          fetch('https://discord.com/api/v10/guilds/' + SKYBASE_GUILD_ID + '/members/' + discordUserId + '/roles/' + FAN_ROLE_ID, {
+            method: 'PUT',
+            headers: { Authorization: 'Bot ' + BOT_TOKEN }
+          })
+        ]);
+        rolesAssigned = true;
       } catch (e) {
-        console.warn('Failed to assign role:', e.message);
+        console.warn('Failed to assign roles:', e.message);
       }
     }
 
-    return res.send(renderPage(true, 'Subscription verified successfully! ' + (roleAssigned ? 'Your 🔴 Krylo Subscriber role has been awarded in Krylo\'s Skybase!' : 'Your subscription to @krylomcyt is confirmed! Return to Discord.')));
+    return res.send(renderPage(true, 'Subscription verified successfully! ' + (rolesAssigned ? 'Your 🔴 Skybase • Subbed to Krylo and ⭐ Skybase • Krylo Fan roles have been awarded in Krylo\'s Skybase!' : 'Your subscription to Krylo MC is confirmed! Return to Discord.')));
   } catch (err) {
     return res.status(500).send(renderPage(false, 'Internal server error: ' + err.message));
   }
@@ -99,6 +104,6 @@ export default async function handler(req, res) {
 function renderPage(success, msg, showSub = false) {
   const border = success ? '#00f2ff' : '#ff4444';
   const title = success ? '✅ Verified!' : '⚠️ Not Verified';
-  const subBtn = showSub ? '<a class="btn btn-yt" href="https://www.youtube.com/@krylomcyt?sub_confirmation=1" target="_blank">▶️ Click Here to Subscribe</a><br><br>' : '';
+  const subBtn = showSub ? '<a class="btn btn-yt" href="https://www.youtube.com/@krylomcyt?sub_confirmation=1" target="_blank">▶️ Click Here to Subscribe to Krylo MC</a><br><br>' : '';
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Krylo's Skybase Sub Verifier</title><style>body{background:#0b0e14;color:#fff;font-family:-apple-system,BlinkMacSystemFont,sans-serif;display:flex;justify-content:center;align-items:center;height:100vh;margin:0}.card{background:#151922;border:1px solid ${border};border-radius:16px;padding:36px;max-width:480px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,0.6)}h1{font-size:26px;color:${border};margin-bottom:12px}p{font-size:15px;color:#a0aec0;line-height:1.6;margin-bottom:24px}.btn{display:inline-block;padding:12px 24px;background:#00f2ff;color:#0b0e14;font-weight:bold;border-radius:8px;text-decoration:none;transition:transform 0.2s}.btn:hover{transform:translateY(-1px)}.btn-yt{background:#ff0000;color:#fff;margin-bottom:15px}</style></head><body><div class="card"><h1>${title}</h1><p>${msg}</p>${subBtn}<a class="btn" href="https://discord.com/channels/1549875778575929446/1549918052513095682">Return to Discord</a></div></body></html>`;
 }
