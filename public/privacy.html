@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Privacy Policy • Krylo's Skybase & Krims Code</title>
+  <title>Privacy Policy • Krylo's Skybase Sub Verifier</title>
   <link rel="icon" type="image/jpeg" href="/app_logo.jpg">
   <style>
     :root {
@@ -32,7 +32,7 @@
       padding: 40px 20px;
     }
     .wrapper {
-      max-width: 820px;
+      max-width: 860px;
       width: 100%;
       background: var(--panel);
       border: 1px solid var(--panel-border);
@@ -111,7 +111,7 @@
       background: rgba(0, 242, 255, 0.04);
       border: 1px solid rgba(0, 242, 255, 0.2);
       border-left: 4px solid var(--cyan);
-      padding: 16px 20px;
+      padding: 18px 22px;
       border-radius: 8px;
       margin: 20px 0;
     }
@@ -143,65 +143,85 @@
 <body>
   <div class="wrapper">
     <div class="brand-header">
-      <img src="/app_logo.jpg" alt="App Logo" class="brand-logo">
+      <img src="/app_logo.jpg" alt="Krylo's Skybase Sub Verifier Logo" class="brand-logo">
       <div>
         <div class="badge">Legal Documentation</div>
         <h1>Privacy Policy</h1>
       </div>
     </div>
     
-    <div class="updated">Last updated: September 17, 2026 • Krylo's Skybase & Krims Code AI</div>
+    <div class="updated">Last updated: September 17, 2026 • Krylo's Skybase Sub Verifier</div>
 
     <p>
-      This Privacy Policy describes how <strong>Krylo's Skybase</strong> and <strong>Krims Code AI</strong> ("we", "us", or "our") collect, handle, and protect your information when you interact with our Discord bot, web application, and YouTube subscription verification services.
+      This Privacy Policy applies to the <strong>Krylo's Skybase Sub Verifier</strong> application ("the App", "we", "us", or "our"), operated by Krishiv (<a href="mailto:71krishivpb@gmail.com">71krishivpb@gmail.com</a>). This policy explains how we collect, use, process, and protect your information when you access or use our automated subscriber verification services for the Krylo's Skybase Discord server.
     </p>
 
-    <h2>1. Google OAuth & YouTube Data Access</h2>
+    <h2>1. Information We Collect and Receive</h2>
     <p>
-      Our application offers an automated verification system allowing Discord community members to verify their subscription to the YouTube channel <a href="https://www.youtube.com/@krylomcyt" target="_blank" rel="noopener">Krylo (@krylomcyt)</a>.
+      When you use <strong>Krylo's Skybase Sub Verifier</strong> to link your YouTube subscription with your Discord account, we access only the minimal necessary data required to deliver the verification service:
     </p>
-    
+    <ul>
+      <li>
+        <strong>Google Account & YouTube Subscription Data:</strong> With your explicit consent via Google OAuth 2.0, we request read-only access to your YouTube subscription list using scope <code>https://www.googleapis.com/auth/youtube.readonly</code>.
+      </li>
+      <li>
+        <strong>Discord Account Identifiers:</strong> When initiated from Discord, our system receives your public Discord User ID and Guild ID to know which account and server to grant the verified role to.
+      </li>
+    </ul>
+
+    <h2>2. Purpose of Data Processing</h2>
     <div class="highlight-box">
-      <h3>Requested Google Scope: youtube.readonly</h3>
+      <h3>Google API Scope: https://www.googleapis.com/auth/youtube.readonly</h3>
       <p>
-        We request read-only access to your YouTube subscription list (<code>https://www.googleapis.com/auth/youtube.readonly</code>) solely for the purpose of checking whether you are subscribed to channel <code>UCDPcL5F_EB2MiWN1nJZbDbQ</code> (@krylomcyt).
+        The sole purpose of requesting access to your YouTube subscriptions is to verify whether your account is currently subscribed to channel <code>UCDPcL5F_EB2MiWN1nJZbDbQ</code> (<a href="https://www.youtube.com/@krylomcyt" target="_blank" rel="noopener">Krylo on YouTube</a>).
       </p>
       <ul style="margin-bottom: 0;">
-        <li><strong>No Account Changes:</strong> We never modify, edit, delete, or create YouTube content, comments, or playlists.</li>
-        <li><strong>No Personal Profile Storage:</strong> We do not collect, retain, or store your Google account password, emails, browsing history, or private videos.</li>
-        <li><strong>Ephemeral Processing:</strong> OAuth access tokens are held in temporary memory solely during the active verification request and are cleared immediately upon completion.</li>
+        <li><strong>Role Assignment:</strong> If the subscription is confirmed, our Discord bot automatically assigns the <code>🔴 Krylo Subscriber</code> role to your Discord profile.</li>
+        <li><strong>No Account Alterations:</strong> We do not upload videos, write comments, modify subscriptions, edit playlists, or change any account settings.</li>
       </ul>
     </div>
 
-    <h2>2. Discord Data We Process</h2>
+    <h2>3. Data Storage, Retention, and Deletion</h2>
     <p>
-      When executing automated subscriber verification via our Discord bot, we record:
+      <strong>We do not retain or store your Google user data.</strong>
     </p>
     <ul>
-      <li><strong>Discord User ID:</strong> Used to assign the <code>🔴 Krylo Subscriber</code> role in Krylo's Skybase Discord server.</li>
-      <li><strong>Verification Status:</strong> A boolean indicator verifying that your channel subscription check was successful.</li>
+      <li><strong>Ephemeral In-Memory Verification:</strong> Temporary OAuth access tokens and API responses are processed entirely in server volatile memory during the active verification check and are purged immediately after execution.</li>
+      <li><strong>No Database of Personal Details:</strong> We do not store your name, email address, password, private videos, viewing habits, or profile metadata in any database.</li>
+      <li><strong>Data Deletion Requests:</strong> Because no personal Google user data is stored on our servers, there is no retained data to delete. However, you may request manual verification audits or role removals at any time by contacting us at <a href="mailto:71krishivpb@gmail.com">71krishivpb@gmail.com</a>.</li>
     </ul>
 
-    <h2>3. Data Sharing & Third-Party Disclosure</h2>
+    <h2>4. Data Sharing and Third-Party Disclosures</h2>
     <p>
-      We do not sell, trade, rent, or transfer your personal data to external third parties. We do not use user data for advertising, machine learning model training on personal information, or external marketing campaigns.
+      We do not sell, rent, lease, trade, or share your Google user data with any third parties, marketing firms, or data brokers.
+    </p>
+    <p>
+      No user data obtained through Google APIs is used to train artificial intelligence or machine learning models.
     </p>
 
-    <h2>4. How to Revoke Access</h2>
+    <h2>5. Google API Limited Use Requirements</h2>
     <p>
-      You maintain complete control over third-party connections to your Google Account. You may revoke access at any time by visiting your Google Security Dashboard:
-      <br>
-      <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">Manage Third-Party Apps with Account Access (Google Account Permissions)</a>.
+      <strong>Krylo's Skybase Sub Verifier</strong>'s use and transfer of information received from Google APIs to any other app adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>, including the Limited Use requirements.
     </p>
 
-    <h2>5. Contact Us</h2>
+    <h2>6. How Users Can Revoke Access</h2>
     <p>
-      If you have questions or privacy inquiries regarding our verification process or data practices, contact developer Krishiv via:
+      You have full control over your Google Account permissions at all times. You can disconnect <strong>Krylo's Skybase Sub Verifier</strong> and revoke access immediately through Google's official security portal:
+    </p>
+    <p>
+      👉 <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">Manage Third-Party Apps & Services (Google Account Permissions)</a>
+    </p>
+
+    <h2>7. Contact and Developer Information</h2>
+    <p>
+      If you have questions, inquiries, or feedback regarding this Privacy Policy or the security practices of <strong>Krylo's Skybase Sub Verifier</strong>, please contact:
     </p>
     <ul>
-      <li>Email: <a href="mailto:71krishivpb@gmail.com">71krishivpb@gmail.com</a></li>
-      <li>Discord Community: Krylo's Skybase</li>
-      <li>YouTube: <a href="https://www.youtube.com/@krylomcyt" target="_blank" rel="noopener">Krylo on YouTube</a></li>
+      <li><strong>Lead Developer:</strong> Krishiv</li>
+      <li><strong>Email:</strong> <a href="mailto:71krishivpb@gmail.com">71krishivpb@gmail.com</a></li>
+      <li><strong>Application Home Page:</strong> <a href="https://krims-code-chatbot.vercel.app">https://krims-code-chatbot.vercel.app</a></li>
+      <li><strong>Discord Community:</strong> Krylo's Skybase</li>
+      <li><strong>YouTube Channel:</strong> <a href="https://www.youtube.com/@krylomcyt" target="_blank" rel="noopener">@krylomcyt</a></li>
     </ul>
 
     <div class="nav-footer">
@@ -210,7 +230,7 @@
         <a href="/terms.html">Terms of Service</a>
       </div>
       <div style="color: var(--text-muted);">
-        © 2026 Krylo's Skybase & Krims Code. All rights reserved.
+        © 2026 Krylo's Skybase Sub Verifier. All rights reserved.
       </div>
     </div>
   </div>
