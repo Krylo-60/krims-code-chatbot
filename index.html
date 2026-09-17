@@ -3,191 +3,537 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Krims Code // AI Studio Playground</title>
-  <meta name="description" content="Krims Code AI Studio is a premium developer playground to customize, test, and save your own LLM configurations." />
-  <link rel="icon" href="./logo.png" />
-  
-  <!-- Font Imports -->
+  <title>Krylo's Skybase & Krims Code Suite • Official App Homepage</title>
+  <meta name="description" content="Official home of Krylo's Skybase Discord community, automated YouTube subscriber verification, and the Krims Code developer AI playground.">
+  <link rel="icon" type="image/jpeg" href="/app_logo.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --cyan: #00f2ff;
+      --cyan-glow: rgba(0, 242, 255, 0.25);
+      --red: #ff334b;
+      --red-glow: rgba(255, 51, 75, 0.25);
+      --bg: #07090e;
+      --panel: rgba(14, 19, 28, 0.85);
+      --panel-border: rgba(0, 242, 255, 0.15);
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --discord: #5865F2;
+      --youtube: #ff0000;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(circle at 20% 0%, rgba(0, 242, 255, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 80% 20%, rgba(255, 51, 75, 0.10) 0%, transparent 40%),
+        radial-gradient(circle at 50% 100%, rgba(88, 101, 242, 0.08) 0%, transparent 50%);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    a { color: var(--cyan); text-decoration: none; transition: color 0.2s; }
+    a:hover { text-decoration: underline; }
+
+    /* Navigation Bar */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      background: rgba(7, 9, 14, 0.75);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none !important;
+    }
+    .brand-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      border: 1px solid var(--panel-border);
+      box-shadow: 0 0 15px var(--cyan-glow);
+    }
+    .brand-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.3px;
+    }
+    .brand-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .nav-links a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+    .btn-nav-action {
+      background: linear-gradient(135deg, #ff2a4a, #ff0033);
+      color: #fff !important;
+      font-weight: 600;
+      font-size: 13px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px var(--red-glow);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-nav-action:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(255, 0, 51, 0.4);
+      text-decoration: none !important;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 50px 24px 80px;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 40px 0 60px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      background: rgba(0, 242, 255, 0.08);
+      border: 1px solid rgba(0, 242, 255, 0.25);
+      color: var(--cyan);
+      margin-bottom: 24px;
+    }
+    .hero-badge-pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 8px var(--cyan);
+    }
+    .hero h1 {
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+    .hero h1 span {
+      background: linear-gradient(135deg, #00f2ff, #70a6ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-desc {
+      font-size: clamp(16px, 2vw, 18px);
+      color: var(--text-muted);
+      max-width: 720px;
+      margin: 0 auto 36px;
+    }
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #00f2ff, #0099ff);
+      color: #000;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 14px 28px;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px var(--cyan-glow);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(0, 242, 255, 0.4);
+      text-decoration: none;
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      font-weight: 600;
+      font-size: 15px;
+      padding: 14px 26px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+      text-decoration: none;
+    }
+
+    /* Cards Grid */
+    .section-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+    .section-subtitle {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin-bottom: 60px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 30px;
+      backdrop-filter: blur(10px);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(0, 242, 255, 0.35);
+    }
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+    .icon-red { background: rgba(255, 51, 75, 0.15); color: var(--red); border: 1px solid rgba(255, 51, 75, 0.3); }
+    .icon-cyan { background: rgba(0, 242, 255, 0.12); color: var(--cyan); border: 1px solid rgba(0, 242, 255, 0.3); }
+    .icon-indigo { background: rgba(88, 101, 242, 0.15); color: var(--discord); border: 1px solid rgba(88, 101, 242, 0.3); }
+    .card h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .card p {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* Transparency Section */
+    .transparency-box {
+      background: rgba(14, 19, 28, 0.95);
+      border: 1px solid rgba(0, 242, 255, 0.3);
+      border-left: 5px solid var(--cyan);
+      border-radius: 16px;
+      padding: 36px;
+      margin-bottom: 60px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+    .transparency-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .transparency-header h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .badge-scope {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      background: rgba(0, 242, 255, 0.08);
+      color: var(--cyan);
+      border: 1px solid rgba(0, 242, 255, 0.25);
+      padding: 4px 10px;
+      border-radius: 6px;
+      display: inline-block;
+      margin: 8px 0 16px;
+    }
+    .transparency-list {
+      margin-left: 20px;
+      color: var(--text);
+      font-size: 14.5px;
+    }
+    .transparency-list li {
+      margin-bottom: 12px;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 40px 24px;
+      background: rgba(5, 7, 11, 0.95);
+    }
+    .footer-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 30px;
+    }
+    .footer-brand h4 {
+      font-size: 18px;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .footer-brand p {
+      font-size: 13px;
+      color: var(--text-muted);
+      max-width: 320px;
+    }
+    .footer-links-group {
+      display: flex;
+      gap: 40px;
+    }
+    .footer-col h5 {
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .footer-col ul {
+      list-style: none;
+    }
+    .footer-col li {
+      margin-bottom: 10px;
+    }
+    .footer-col a {
+      color: var(--text-muted);
+      font-size: 13.5px;
+    }
+    .footer-col a:hover {
+      color: var(--cyan);
+    }
+    .footer-bottom {
+      max-width: 1080px;
+      margin: 30px auto 0;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-muted);
+      font-size: 13px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+  </style>
 </head>
 <body>
 
-  <div class="app-container" id="app">
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <a href="/" class="nav-brand">
+      <img src="/app_logo.jpg" alt="Krylo's Skybase Logo" class="brand-avatar">
+      <div>
+        <div class="brand-title">Krylo's Skybase</div>
+        <div class="brand-subtitle">& Krims Code Suite</div>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#data-transparency">Data Transparency</a></li>
+      <li><a href="/console">AI Studio</a></li>
+      <li><a href="/privacy.html">Privacy</a></li>
+      <li><a href="/terms.html">Terms</a></li>
+      <li>
+        <a href="/api/youtube-verify" class="btn-nav-action">Verify YouTube</a>
+      </li>
+    </ul>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="container">
     
-    <!-- Left Configuration Panel (AI Studio Sidebar) -->
-    <aside class="studio-sidebar" id="config-sidebar">
-      <div class="sidebar-header">
-        <a class="brand" href="#">
-          <img src="./logo.png" alt="Krims Code Logo" id="brand-logo" />
-          <span>Krims AI Studio</span>
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-badge">
+        <span class="hero-badge-pulse"></span>
+        Official App & Community Portal
+      </div>
+      <h1>Powering Community Automation & <span>AI Workflows</span></h1>
+      <p class="hero-desc">
+        The official platform for <strong>Krylo's Skybase</strong> Discord server. Automated YouTube subscriber verification, custom developer AI playground, and interactive server perks.
+      </p>
+      <div class="hero-actions">
+        <a href="/api/youtube-verify" class="btn-primary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          Verify with YouTube
         </a>
-        <div class="brand-subtitle">Model Playground v1.0</div>
+        <a href="/console" class="btn-secondary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="m9 8 4 4-4 4"/></svg>
+          Launch AI Studio
+        </a>
+        <a href="https://krims-bot-dashboard.vercel.app" target="_blank" rel="noopener" class="btn-secondary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+          Bot Dashboard
+        </a>
       </div>
+    </section>
 
-      <div class="sidebar-scroll-content">
-        
-        <!-- System Prompt Instructions -->
-        <div class="config-section">
-          <div class="section-title-container">
-            <span class="section-title">System Instructions</span>
-            <span class="tooltip" title="System instructions define the AI's core persona and behavior (e.g. 'Speak like a pirate')">?</span>
+    <!-- App Functionality Grid -->
+    <section id="features">
+      <h2 class="section-title">Application Functionality</h2>
+      <p class="section-subtitle">How our verified application serves users and community members.</p>
+
+      <div class="grid">
+        <!-- Feature 1 -->
+        <div class="card">
+          <div class="card-icon icon-red">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
           </div>
-          <textarea id="system-prompt-input" placeholder="You are a helpful AI assistant created by Krishiv. Answer all coding queries with clear instructions..."></textarea>
-        </div>
-
-        <!-- Model Parameters -->
-        <div class="config-section">
-          <span class="section-title">Model settings</span>
-          
-          <div class="setting-item">
-            <label for="model-select">Model Engine</label>
-            <select id="model-select">
-              <option value="krims-local" selected>Krims-Local-Engine (Custom JS Chain)</option>
-              <option value="krims-cloud">Krims-Cloud-Engine (Qwen-72B Cloud LLM)</option>
-              <option value="gemini">Gemini-Engine (Google Gemini 2.5)</option>
-              <option value="groq">Groq-Engine (Llama 3.3 via Groq)</option>
-            </select>
-          </div>
-
-          <!-- Sliders for Temperature -->
-          <div class="setting-item">
-            <div class="slider-header">
-              <label for="temp-slider">Temperature</label>
-              <span id="temp-val">0.7</span>
-            </div>
-            <input type="range" id="temp-slider" min="0" max="1" step="0.1" value="0.7" />
-            <div class="slider-labels">
-              <span>Precise</span>
-              <span>Creative</span>
-            </div>
-          </div>
-
-          <!-- Sliders for Max Tokens -->
-          <div class="setting-item">
-            <div class="slider-header">
-              <label for="tokens-slider">Max Output Tokens</label>
-              <span id="tokens-val">512</span>
-            </div>
-            <input type="range" id="tokens-slider" min="64" max="1024" step="64" value="512" />
-          </div>
-        </div>
-
-        <!-- Saved Presets Configurations -->
-        <div class="config-section">
-          <span class="section-title">Save & Load Presets</span>
-          <div class="preset-actions">
-            <input type="text" id="preset-name-input" placeholder="My Custom AI name..." />
-            <button id="btn-save-preset" class="btn-preset-save">Save AI Preset</button>
-          </div>
-          <div id="presets-list" class="presets-list">
-            <!-- Dynamically loaded presets -->
-          </div>
-        </div>
-
-      </div>
-
-      <div class="sidebar-footer">
-        <div>API Mode: Custom Cloud/Local Engine</div>
-        <div>Creator: Krishiv Workspace</div>
-      </div>
-    </aside>
-
-    <!-- Main Workspace (Chat / Testing Area) -->
-    <main class="studio-main">
-      <header class="studio-header">
-        <div class="header-left">
-          <button id="mobile-config-toggle" class="mobile-menu-btn" title="Toggle parameters panel">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="4" y1="21" x2="4" y2="14"></line>
-              <line x1="4" y1="10" x2="4" y2="3"></line>
-              <line x1="12" y1="21" x2="12" y2="12"></line>
-              <line x1="12" y1="8" x2="12" y2="3"></line>
-              <line x1="20" y1="21" x2="20" y2="16"></line>
-              <line x1="20" y1="12" x2="20" y2="3"></line>
-              <line x1="1" y1="14" x2="7" y2="14"></line>
-              <line x1="9" y1="8" x2="15" y2="8"></line>
-              <line x1="17" y1="16" x2="23" y2="16"></line>
-            </svg>
-          </button>
-          <div class="header-title-container">
-            <div id="active-preset-title" class="header-title">Krims Code AI Hub</div>
-            <div class="header-subtitle">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-              Temp: <span id="header-temp-val">0.7</span> | Max Tokens: <span id="header-tokens-val">512</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="header-status-indicator">
-          <span id="pulse-dot" class="pulse-dot active"></span>
-          <span id="engine-status-text">Playground Active</span>
-        </div>
-      </header>
-
-      <!-- Chat logs workspace -->
-      <div id="chat-messages" class="chat-messages">
-        <!-- Welcome Screen -->
-        <div id="welcome-screen" class="welcome-container">
-          <div class="welcome-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-              <polyline points="2 17 12 22 22 17"></polyline>
-              <polyline points="2 12 12 17 22 12"></polyline>
-            </svg>
-          </div>
-          <h1 class="welcome-title">Krims Code AI Studio</h1>
-          <p class="welcome-desc">
-            Welcome to the developer playground. Tweak your System Instructions in the left panel to change my core behavior. You can test your settings right here in the chat.
+          <h3>Automated YouTube Verification</h3>
+          <p>
+            Members of Krylo's Skybase Discord server can authenticate via Google OAuth 2.0 to confirm they are subscribed to channel <a href="https://www.youtube.com/@krylomcyt" target="_blank" rel="noopener">@krylomcyt</a>. Upon confirmation, the <code>🔴 Krylo Subscriber</code> role is automatically granted.
           </p>
-          
-          <div class="prompt-grid">
-            <div class="prompt-card" data-prompt="Help me write a script using the `krims-code-sdk` to execute a series of prompts programmatically.">
-              <div class="prompt-card-title">SDK Workflows</div>
-              <div class="prompt-card-body">Run automation loops and client initializations.</div>
-            </div>
-            <div class="prompt-card" data-prompt="How do I run the `krims-code` CLI to diagnose my local project for build and performance errors?">
-              <div class="prompt-card-title">CLI Diagnostics</div>
-              <div class="prompt-card-body">Explore commands and debug flags for terminal auditing.</div>
-            </div>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="card">
+          <div class="card-icon icon-cyan">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="m9 8 4 4-4 4"/></svg>
           </div>
+          <h3>Krims Code AI Studio</h3>
+          <p>
+            An interactive developer playground for testing custom AI system instructions, configuring temperature, max output tokens, and exploring developer prompts using the Krims Code SDK.
+          </p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="card">
+          <div class="card-icon icon-indigo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+          </div>
+          <h3>Community Bot Services</h3>
+          <p>
+            Discord bot management including server welcoming, leveled role progression, rules compliance, and automated live YouTube release notifications.
+          </p>
         </div>
       </div>
+    </section>
 
-      <!-- Chat input panel -->
-      <div class="input-panel">
-        <div class="input-container">
-          <textarea id="chat-input" placeholder="Type a prompt to test your custom AI configuration..."></textarea>
-          <div class="input-actions">
-            <div class="input-actions-left">
-              <button id="btn-clear-chat" class="btn-action" title="Reset chat testing logs">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="3 6 5 6 21 6"></polyline>
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                </svg>
-              </button>
-              <span id="char-counter">0 chars</span>
-            </div>
-            <button id="btn-send-chat" class="btn-send">
-              <span>Run Test</span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="22" y1="2" x2="11" y2="13"></line>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-              </svg>
-            </button>
-          </div>
+    <!-- Google OAuth Transparency Section -->
+    <section id="data-transparency">
+      <div class="transparency-box">
+        <div class="transparency-header">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <h2>Google OAuth & Data Privacy Transparency</h2>
         </div>
-        <div class="stats-footer">
-          <span id="latency-stat">Latency: -</span>
-          <span id="tokens-stat">Speed: -</span>
-        </div>
+        <p>
+          To maintain absolute transparency with our users and comply with Google API Services User Data Policy, here is exactly how Google Account data is accessed:
+        </p>
+
+        <div class="badge-scope">Requested Scope: https://www.googleapis.com/auth/youtube.readonly</div>
+
+        <ul class="transparency-list">
+          <li>
+            <strong>Purpose of Request:</strong> Read-only access is used strictly to verify that the authenticating user is currently subscribed to Krylo's YouTube channel (<code>UCDPcL5F_EB2MiWN1nJZbDbQ</code> / <code>@krylomcyt</code>).
+          </li>
+          <li>
+            <strong>Zero Personal Data Retention:</strong> We do NOT store your Google profile information, email inbox, passwords, or browsing history. The subscription check is executed ephemerally in real-time.
+          </li>
+          <li>
+            <strong>No Modification Rights:</strong> The requested scope is strictly read-only. Our application cannot edit, upload, comment, delete, or modify any aspect of your YouTube account.
+          </li>
+          <li>
+            <strong>Immediate Token Discard:</strong> OAuth access tokens are discarded from memory immediately after your subscription status is verified and reported back to Discord.
+          </li>
+          <li>
+            <strong>Revoke Access Anytime:</strong> You can disconnect and revoke permissions instantly through your <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">Google Account Permissions Dashboard</a>.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h4>Krylo's Skybase & Krims Code Suite</h4>
+        <p>Official community portal, automated YouTube subscriber verification, and developer tools created by Krishiv.</p>
       </div>
 
-    </main>
+      <div class="footer-links-group">
+        <div class="footer-col">
+          <h5>Legal & Policy</h5>
+          <ul>
+            <li><a href="/privacy.html">Privacy Policy</a></li>
+            <li><a href="/terms.html">Terms of Service</a></li>
+            <li><a href="#data-transparency">Data Transparency</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Platform</h5>
+          <ul>
+            <li><a href="/api/youtube-verify">Verify YouTube</a></li>
+            <li><a href="/console">AI Studio Console</a></li>
+            <li><a href="https://krims-bot-dashboard.vercel.app" target="_blank" rel="noopener">Bot Dashboard</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Community</h5>
+          <ul>
+            <li><a href="https://www.youtube.com/@krylomcyt" target="_blank" rel="noopener">Krylo on YouTube</a></li>
+            <li><a href="mailto:71krishivpb@gmail.com">Contact Developer</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
 
-  </div>
+    <div class="footer-bottom">
+      <div>© 2026 Krylo's Skybase & Krims Code. All rights reserved.</div>
+      <div>Hosted on Vercel • Compliant with Google API Services User Data Policy</div>
+    </div>
+  </footer>
 
-  <script type="module" src="./src/main.js"></script>
 </body>
 </html>
