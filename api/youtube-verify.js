@@ -22,7 +22,11 @@ export default async function handler(req, res) {
   }
 
   if (!code) {
-    const discordUserId = req.query.discord_id || '';
+    const discordUserId = (req.query.discord_id || '').trim();
+    if (!discordUserId) {
+      return res.send(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Krylo's Skybase Sub Verifier</title><style>body{background:#0b0e14;color:#fff;font-family:-apple-system,BlinkMacSystemFont,sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0}.card{background:#151922;border:1px solid #00f2ff;border-radius:16px;padding:36px;max-width:440px;width:90%;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,0.6)}h1{font-size:24px;color:#00f2ff;margin-bottom:12px}p{font-size:14px;color:#a0aec0;line-height:1.6;margin-bottom:20px}input{width:100%;box-sizing:border-box;padding:12px 16px;border-radius:8px;border:1px solid #334155;background:#0b0e14;color:#fff;font-size:15px;margin-bottom:16px;outline:none}input:focus{border-color:#00f2ff}.btn{display:inline-block;width:100%;box-sizing:border-box;padding:14px;background:#00f2ff;color:#0b0e14;font-weight:bold;font-size:16px;border:none;border-radius:8px;cursor:pointer;transition:transform 0.2s}.btn:hover{transform:translateY(-1px)}</style></head><body><div class="card"><h1>🔴 Skybase Verifier</h1><p>Enter your <strong>Discord User ID</strong> to verify your YouTube subscription and unlock your Skybase roles:</p><form method="GET" action="/api/youtube-verify"><input type="text" name="discord_id" placeholder="e.g. 1414143825538191373" required><button type="submit" class="btn">🌐 Continue to Google Sign-In</button></form><p style="margin-top:20px;font-size:12px;color:#64748b">Tip: In Discord, right-click your avatar and select "Copy User ID".</p></div></body></html>`);
+    }
+
     const authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' + new URLSearchParams({
       client_id: CLIENT_ID,
       redirect_uri: REDIRECT_URI,
