@@ -1,3 +1,12 @@
+# Environment & Secrets
+.env
+.env.*
+*.env
+*.pem
+*.key
+*.cert
+service-account*.json
+
 node_modules/
 dist/
 .vercel
