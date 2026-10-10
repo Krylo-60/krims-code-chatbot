@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Privacy Policy • Krylo's Skybase Sub Verifier</title>
+  <title>Privacy Policy • Krims Code AI</title>
   <link rel="icon" type="image/jpeg" href="/app_logo.jpg">
   <style>
     :root {
       --cyan: #00f2ff;
       --cyan-glow: rgba(0, 242, 255, 0.25);
-      --red: #ff334b;
+      --purple: #8b5cf6;
       --bg: #090c10;
       --panel: #111620;
       --panel-border: rgba(0, 242, 255, 0.2);
@@ -21,7 +21,7 @@
       background-color: var(--bg);
       background-image: 
         radial-gradient(circle at 50% top, rgba(0, 242, 255, 0.08) 0%, transparent 50%),
-        radial-gradient(circle at 100% bottom, rgba(255, 51, 75, 0.05) 0%, transparent 50%);
+        radial-gradient(circle at 100% bottom, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
       color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       line-height: 1.7;
@@ -47,7 +47,7 @@
       content: '';
       position: absolute;
       top: 0; left: 0; right: 0; height: 3px;
-      background: linear-gradient(90deg, transparent, var(--cyan), var(--red), transparent);
+      background: linear-gradient(90deg, transparent, var(--cyan), var(--purple), transparent);
     }
     .brand-header {
       display: flex;
@@ -115,11 +115,6 @@
       border-radius: 8px;
       margin: 20px 0;
     }
-    .highlight-box h3 {
-      font-size: 16px;
-      color: #fff;
-      margin-bottom: 8px;
-    }
     a {
       color: var(--cyan);
       text-decoration: none;
@@ -143,85 +138,64 @@
 <body>
   <div class="wrapper">
     <div class="brand-header">
-      <img src="/app_logo.jpg" alt="Krylo's Skybase Sub Verifier Logo" class="brand-logo">
+      <img src="/app_logo.jpg" alt="Krims Code AI Logo" class="brand-logo">
       <div>
         <div class="badge">Legal Documentation</div>
         <h1>Privacy Policy</h1>
       </div>
     </div>
     
-    <div class="updated">Last updated: September 17, 2026 • Krylo's Skybase Sub Verifier</div>
+    <div class="updated">Last updated: October 10, 2026 • Krims Code AI & Multi-Bot Platform</div>
 
     <p>
-      This Privacy Policy applies to the <strong>Krylo's Skybase Sub Verifier</strong> application ("the App", "we", "us", or "our"), operated by Krishiv (<a href="mailto:71krishivpb@gmail.com">71krishivpb@gmail.com</a>). This policy explains how we collect, use, process, and protect your information when you access or use our automated subscriber verification services for the Krylo's Skybase Discord server.
+      This Privacy Policy applies to the <strong>Krims Code AI</strong> multi-bot application and web platform ("the App", "we", "us", or "our"), operated by Krylo Team (<a href="mailto:71krishivpb@gmail.com">71krishivpb@gmail.com</a>). This policy explains our commitments to privacy, data minimization, and user control.
     </p>
 
-    <h2>1. Information We Collect and Receive</h2>
+    <h2>1. Information We Collect</h2>
     <p>
-      When you use <strong>Krylo's Skybase Sub Verifier</strong> to link your YouTube subscription with your Discord account, we access only the minimal necessary data required to deliver the verification service:
+      We collect only the minimal data strictly required to deliver bot functionality:
     </p>
     <ul>
-      <li>
-        <strong>Google Account & YouTube Subscription Data:</strong> With your explicit consent via Google OAuth 2.0, we request read-only access to your YouTube subscription list using scope <code>https://www.googleapis.com/auth/youtube.readonly</code>.
-      </li>
-      <li>
-        <strong>Discord Account Identifiers:</strong> When initiated from Discord, our system receives your public Discord User ID and Guild ID to know which account and server to grant the verified role to.
-      </li>
+      <li><strong>Discord Identifiers:</strong> Discord User IDs, Server (Guild) IDs, and Channel IDs to manage command execution, permissions, and roles.</li>
+      <li><strong>Economy & Leveling Stats:</strong> In-game KryloCoins balance, chat/voice XP levels, inventory items, and counting streaks.</li>
+      <li><strong>Server AI Memory:</strong> Server-specific facts and conversational context taught to the bot or generated during chat interactions.</li>
+      <li><strong>Optional Account Links:</strong> Minecraft In-Game Names (IGNs) or YouTube/Twitch usernames solely when explicitly provided by the user for rank sync or role verification.</li>
     </ul>
 
     <h2>2. Purpose of Data Processing</h2>
     <div class="highlight-box">
-      <h3>Google API Scope: https://www.googleapis.com/auth/youtube.readonly</h3>
-      <p>
-        The sole purpose of requesting access to your YouTube subscriptions is to verify whether your account is currently subscribed to channel <code>UCDPcL5F_EB2MiWN1nJZbDbQ</code> (<a href="https://www.youtube.com/@krylomcyt" target="_blank" rel="noopener">Krylo on YouTube</a>).
+      <p style="margin-bottom: 0;">
+        All collected data is processed exclusively to deliver requested bot services: calculating leveling rank cards, maintaining counting game scores, enforcing server auto-moderation, and providing AI responses.
       </p>
-      <ul style="margin-bottom: 0;">
-        <li><strong>Role Assignment:</strong> If the subscription is confirmed, our Discord bot automatically assigns the <code>🔴 Krylo Subscriber</code> role to your Discord profile.</li>
-        <li><strong>No Account Alterations:</strong> We do not upload videos, write comments, modify subscriptions, edit playlists, or change any account settings.</li>
-      </ul>
     </div>
 
-    <h2>3. Data Storage, Retention, and Deletion</h2>
+    <h2>3. Data Isolation and Protection</h2>
     <p>
-      <strong>We do not retain or store your Google user data.</strong>
+      <strong>Every server's data is strictly isolated.</strong>
     </p>
     <ul>
-      <li><strong>Ephemeral In-Memory Verification:</strong> Temporary OAuth access tokens and API responses are processed entirely in server volatile memory during the active verification check and are purged immediately after execution.</li>
-      <li><strong>No Database of Personal Details:</strong> We do not store your name, email address, password, private videos, viewing habits, or profile metadata in any database.</li>
-      <li><strong>Data Deletion Requests:</strong> Because no personal Google user data is stored on our servers, there is no retained data to delete. However, you may request manual verification audits or role removals at any time by contacting us at <a href="mailto:71krishivpb@gmail.com">71krishivpb@gmail.com</a>.</li>
+      <li>Conversations and facts learned in Server A are never accessible or surfaced in Server B.</li>
+      <li>We do not sell, rent, lease, trade, or share user data with any marketing companies, third-party advertisers, or data brokers.</li>
+      <li>No private server chats or user data are used to train external commercial AI models.</li>
     </ul>
 
-    <h2>4. Data Sharing and Third-Party Disclosures</h2>
+    <h2>4. Server Owner Data Control & Deletion</h2>
     <p>
-      We do not sell, rent, lease, trade, or share your Google user data with any third parties, marketing firms, or data brokers.
-    </p>
-    <p>
-      No user data obtained through Google APIs is used to train artificial intelligence or machine learning models.
-    </p>
-
-    <h2>5. Google API Limited Use Requirements</h2>
-    <p>
-      <strong>Krylo's Skybase Sub Verifier</strong>'s use and transfer of information received from Google APIs to any other app adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>, including the Limited Use requirements.
-    </p>
-
-    <h2>6. How Users Can Revoke Access</h2>
-    <p>
-      You have full control over your Google Account permissions at all times. You can disconnect <strong>Krylo's Skybase Sub Verifier</strong> and revoke access immediately through Google's official security portal:
-    </p>
-    <p>
-      👉 <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">Manage Third-Party Apps & Services (Google Account Permissions)</a>
-    </p>
-
-    <h2>7. Contact and Developer Information</h2>
-    <p>
-      If you have questions, inquiries, or feedback regarding this Privacy Policy or the security practices of <strong>Krylo's Skybase Sub Verifier</strong>, please contact:
+      Server owners retain complete sovereignty over their data:
     </p>
     <ul>
-      <li><strong>Lead Developer:</strong> Krishiv</li>
+      <li><strong>Instant Wipe:</strong> Server administrators can purge their server's neural memory and facts at any time with <code>/memory action:reset</code>.</li>
+      <li><strong>Account Removal:</strong> Individual users may request deletion of their economy or leveling stats by contacting support.</li>
+    </ul>
+
+    <h2>5. Contact & Support</h2>
+    <p>
+      If you have questions regarding this Privacy Policy or your data, please contact:
+    </p>
+    <ul>
+      <li><strong>Lead Developer:</strong> Krylo & Krishiv</li>
       <li><strong>Email:</strong> <a href="mailto:71krishivpb@gmail.com">71krishivpb@gmail.com</a></li>
-      <li><strong>Application Home Page:</strong> <a href="https://krims-code-chatbot.vercel.app">https://krims-code-chatbot.vercel.app</a></li>
-      <li><strong>Discord Community:</strong> Krylo's Skybase</li>
-      <li><strong>YouTube Channel:</strong> <a href="https://www.youtube.com/@krylomcyt" target="_blank" rel="noopener">@krylomcyt</a></li>
+      <li><strong>Web Portal:</strong> <a href="https://krims-code-chatbot.vercel.app">https://krims-code-chatbot.vercel.app</a></li>
     </ul>
 
     <div class="nav-footer">
@@ -230,7 +204,7 @@
         <a href="/terms.html">Terms of Service</a>
       </div>
       <div style="color: var(--text-muted);">
-        © 2026 Krylo's Skybase Sub Verifier. All rights reserved.
+        © 2026 Krims Code AI • Krylo Team. All rights reserved.
       </div>
     </div>
   </div>
