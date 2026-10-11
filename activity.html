@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Krims Code AI • Discord Activity</title>
+  <meta name="description" content="Official Discord Voice Activity & Party Games Hub for Krims Code AI.">
+  <link rel="icon" href="/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #1e1f22;
+      --bg-secondary: #2b2d31;
+      --bg-tertiary: #313338;
+      --accent-cyan: #00f2ff;
+      --accent-discord: #5865f2;
+      --accent-green: #23a55a;
+      --accent-red: #f23f43;
+      --accent-yellow: #f0b232;
+      --text-normal: #dbdee1;
+      --text-muted: #949ba4;
+      --text-header: #f2f3f5;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-normal);
+      font-family: var(--font-main);
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+
+    /* Top Discord Activity Header */
+    header.activity-header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(8px);
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      border: 1px solid var(--accent-cyan);
+      box-shadow: 0 0 10px rgba(0, 242, 255, 0.35);
+    }
+
+    .brand-meta h1 {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-header);
+      letter-spacing: -0.2px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .brand-badge {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-discord));
+      color: #000;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 8px var(--accent-green);
+    }
+
+    /* Tab Navigation */
+    nav.tab-nav {
+      display: flex;
+      background: var(--bg-secondary);
+      padding: 4px 12px;
+      border-bottom: 1px solid var(--border-color);
+      gap: 8px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-header);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .tab-btn.active {
+      color: #fff;
+      background: rgba(0, 242, 255, 0.15);
+      border: 1px solid rgba(0, 242, 255, 0.3);
+      box-shadow: 0 0 10px rgba(0, 242, 255, 0.15);
+    }
+
+    /* Main Container */
+    main.content-area {
+      flex: 1;
+      padding: 16px;
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .tab-pane {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .tab-pane.active {
+      display: flex;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-header);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* 💬 AI Chat Tab */
+    .chat-box {
+      height: 340px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-right: 6px;
+      scroll-behavior: smooth;
+    }
+
+    .chat-msg {
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      max-width: 85%;
+      line-height: 1.5;
+    }
+
+    .chat-msg.bot {
+      background: var(--bg-tertiary);
+      border: 1px solid rgba(0, 242, 255, 0.2);
+      align-self: flex-start;
+      color: var(--text-normal);
+    }
+
+    .chat-msg.user {
+      background: linear-gradient(135deg, #5865f2, #4752c4);
+      color: #fff;
+      align-self: flex-end;
+    }
+
+    .chat-input-bar {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .chat-input {
+      flex: 1;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text-normal);
+      font-size: 14px;
+      font-family: var(--font-main);
+      outline: none;
+    }
+
+    .chat-input:focus {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 8px rgba(0, 242, 255, 0.2);
+    }
+
+    .btn-send {
+      background: var(--accent-cyan);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 0 18px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .btn-send:active {
+      transform: scale(0.96);
+    }
+
+    /* 🎮 Games Hub */
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .game-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .game-card:hover {
+      border-color: var(--accent-cyan);
+      transform: translateY(-2px);
+    }
+
+    .game-card h3 {
+      font-size: 15px;
+      color: var(--text-header);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .game-card p {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    .game-play-btn {
+      background: var(--bg-tertiary);
+      color: var(--text-header);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 9px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .game-play-btn:hover {
+      background: var(--accent-cyan);
+      color: #000;
+      border-color: var(--accent-cyan);
+    }
+
+    /* ⚡ Reaction Game Arena */
+    .reaction-box {
+      height: 180px;
+      border-radius: 10px;
+      background: var(--accent-red);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      text-align: center;
+      padding: 16px;
+      transition: background 0.1s;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+    }
+
+    .reaction-box.ready {
+      background: var(--accent-green);
+      box-shadow: 0 0 20px rgba(35, 165, 90, 0.6);
+    }
+
+    .reaction-box.waiting {
+      background: var(--accent-yellow);
+      color: #000;
+    }
+
+    /* 🔢 Live Counting Arena */
+    .counting-arena {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 20px;
+      background: var(--bg-tertiary);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      text-align: center;
+    }
+
+    .counting-number {
+      font-family: var(--font-mono);
+      font-size: 52px;
+      font-weight: 900;
+      color: var(--accent-cyan);
+      text-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+    }
+
+    .counting-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .counting-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .btn-count {
+      background: linear-gradient(135deg, var(--accent-cyan), #00b4d8);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 24px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 0 12px rgba(0, 242, 255, 0.3);
+      transition: transform 0.1s;
+    }
+
+    .btn-count:active {
+      transform: scale(0.95);
+    }
+
+    /* 🧠 Trivia Arena */
+    .trivia-box {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .trivia-question {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-header);
+      padding: 12px;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      border-left: 4px solid var(--accent-cyan);
+    }
+
+    .trivia-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .trivia-btn {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      color: var(--text-normal);
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+    }
+
+    .trivia-btn:hover {
+      border-color: var(--accent-cyan);
+      background: var(--bg-tertiary);
+    }
+
+    .trivia-btn.correct {
+      background: var(--accent-green) !important;
+      color: #fff !important;
+      border-color: var(--accent-green) !important;
+    }
+
+    .trivia-btn.wrong {
+      background: var(--accent-red) !important;
+      color: #fff !important;
+      border-color: var(--accent-red) !important;
+    }
+
+    /* Leaderboard Table */
+    .lb-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 13.5px;
+    }
+
+    .lb-row:last-child {
+      border-bottom: none;
+    }
+
+    .lb-rank {
+      font-weight: 800;
+      width: 32px;
+      color: var(--accent-cyan);
+    }
+
+    .lb-user {
+      flex: 1;
+      font-weight: 600;
+      color: var(--text-header);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .lb-score {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--accent-yellow);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header class="activity-header">
+    <div class="brand-wrap">
+      <img src="/logo.png" alt="Krims Code Logo" class="brand-avatar" onerror="this.src='/app_logo.jpg'">
+      <div class="brand-meta">
+        <h1>Krims Code AI <span class="brand-badge">Activity</span></h1>
+        <div class="status-indicator">
+          <span class="status-dot"></span>
+          <span id="discord-session-label">Discord Voice Session • Active</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Bar -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('chat')">💬 AI Companion</button>
+    <button class="tab-btn" onclick="switchTab('games')">🎮 Mini-Games</button>
+    <button class="tab-btn" onclick="switchTab('reaction')">⚡ Reaction Duel</button>
+    <button class="tab-btn" onclick="switchTab('counting')">🔢 Live Counting</button>
+    <button class="tab-btn" onclick="switchTab('trivia')">🧠 Trivia Quiz</button>
+    <button class="tab-btn" onclick="switchTab('leaderboard')">🏆 Leaderboard</button>
+  </nav>
+
+  <!-- Content Workspace -->
+  <main class="content-area">
+
+    <!-- 1. 💬 AI Chat Companion -->
+    <section id="tab-chat" class="tab-pane active">
+      <div class="card">
+        <div class="card-title">🤖 Krims Code AI Live Assistant</div>
+        <div class="chat-box" id="chat-messages">
+          <div class="chat-msg bot">
+            👋 **Welcome to the Krims Code Discord Activity!**<br>
+            I'm your live AI companion directly inside Discord voice chat. Ask me anything, generate squad tactics, roll dice, or jump into mini-games!
+          </div>
+        </div>
+        <div class="chat-input-bar">
+          <input type="text" id="chat-input" class="chat-input" placeholder="Type a message or question for Krims Code AI..." onkeydown="if(event.key==='Enter') sendChatMessage()">
+          <button class="btn-send" onclick="sendChatMessage()">Send</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. 🎮 Mini-Games Hub -->
+    <section id="tab-games" class="tab-pane">
+      <div class="card">
+        <div class="card-title">🎮 Squad Voice Mini-Games</div>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">
+          Choose a rapid party game to play together with everyone in this voice room!
+        </p>
+        <div class="games-grid">
+          <div class="game-card">
+            <h3>⚡ Reaction Duel</h3>
+            <p>Compete to see who has the fastest reaction time when the screen flashes green!</p>
+            <button class="game-play-btn" onclick="switchTab('reaction')">Play Reaction Duel ➔</button>
+          </div>
+          <div class="game-card">
+            <h3>🔢 Live Counting Arena</h3>
+            <p>Climb the server counting streak without breaking the chain!</p>
+            <button class="game-play-btn" onclick="switchTab('counting')">Open Counting Arena ➔</button>
+          </div>
+          <div class="game-card">
+            <h3>🧠 Tech & Gaming Trivia</h3>
+            <p>10 rapid-fire questions on Minecraft, PvP, coding, and gaming lore!</p>
+            <button class="game-play-btn" onclick="switchTab('trivia')">Start Trivia Quiz ➔</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. ⚡ Reaction Duel -->
+    <section id="tab-reaction" class="tab-pane">
+      <div class="card">
+        <div class="card-title">⚡ Speed Reaction Duel</div>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+          Click the arena below to begin. Wait for GREEN, then click as fast as possible!
+        </p>
+        <div id="reaction-box" class="reaction-box" onclick="handleReactionClick()">
+          Click here to start!
+        </div>
+        <div id="reaction-result" style="text-align: center; margin-top: 12px; font-family: var(--font-mono); font-size: 14px; color: var(--accent-cyan);">
+          Best Reaction: -- ms
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. 🔢 Live Counting Arena -->
+    <section id="tab-counting" class="tab-pane">
+      <div class="card">
+        <div class="card-title">🔢 The Half Life's Counting Arena</div>
+        <div class="counting-arena">
+          <div class="counting-sub">Current Server Record Streak</div>
+          <div class="counting-number" id="counting-display">26</div>
+          <div class="counting-sub" id="counting-status">Next number to drop: <strong style="color:#fff;" id="counting-next">27</strong></div>
+          <div class="counting-actions">
+            <button class="btn-count" onclick="incrementCounting()">Count Next (+1)</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. 🧠 Trivia Quiz -->
+    <section id="tab-trivia" class="tab-pane">
+      <div class="card">
+        <div class="card-title">🧠 Squad Trivia Showdown</div>
+        <div class="trivia-box">
+          <div class="trivia-question" id="trivia-q">What is the diamond count required to craft a full set of Minecraft armor?</div>
+          <div class="trivia-options" id="trivia-opts">
+            <button class="trivia-btn" onclick="checkTrivia(0)">A. 24</button>
+            <button class="trivia-btn" onclick="checkTrivia(1)">B. 26</button>
+            <button class="trivia-btn" onclick="checkTrivia(2)">C. 28</button>
+            <button class="trivia-btn" onclick="checkTrivia(3)">D. 30</button>
+          </div>
+          <div id="trivia-score" style="font-size: 13px; color: var(--accent-yellow); font-weight: 700; margin-top: 8px;">
+            Score: 0 / 5
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. 🏆 Leaderboard -->
+    <section id="tab-leaderboard" class="tab-pane">
+      <div class="card">
+        <div class="card-title">🏆 All-Time Community High Scores</div>
+        <div class="lb-row">
+          <div class="lb-rank">🥇</div>
+          <div class="lb-user">Krylo_MC 👑</div>
+          <div class="lb-score">Count: 26 (Record)</div>
+        </div>
+        <div class="lb-row">
+          <div class="lb-rank">🥈</div>
+          <div class="lb-user">st1LLkill3r ⚔️</div>
+          <div class="lb-score">18 Counts</div>
+        </div>
+        <div class="lb-row">
+          <div class="lb-rank">🥉</div>
+          <div class="lb-user">CrazyCoolCam 🛡️</div>
+          <div class="lb-score">14 Counts</div>
+        </div>
+        <div class="lb-row">
+          <div class="lb-rank">4️⃣</div>
+          <div class="lb-user">Bexxy ✨</div>
+          <div class="lb-score">12 Counts</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // Tab Switching
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.tab-nav .tab-btn')).find(b => b.getAttribute('onclick')?.includes(tabId));
+      if (activeBtn) activeBtn.classList.add('active');
+      const pane = document.getElementById('tab-' + tabId);
+      if (pane) pane.classList.add('active');
+    }
+
+    // AI Chat Engine
+    async function sendChatMessage() {
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+
+      const container = document.getElementById('chat-messages');
+      const userDiv = document.createElement('div');
+      userDiv.className = 'chat-msg user';
+      userDiv.textContent = text;
+      container.appendChild(userDiv);
+      container.scrollTop = container.scrollHeight;
+
+      // Loading bot message
+      const botDiv = document.createElement('div');
+      botDiv.className = 'chat-msg bot';
+      botDiv.textContent = 'Thinking... ⚡';
+      container.appendChild(botDiv);
+      container.scrollTop = container.scrollHeight;
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text })
+        });
+        const data = await res.json();
+        botDiv.textContent = data.reply || data.response || "I'm online and connected in your Discord Activity!";
+      } catch (err) {
+        // Fallback local response
+        const fallbackAnswers = [
+          "⚡ Krims Code AI online! Looking good in the voice channel!",
+          "🔥 Ready to dominate! Check out the Reaction Duel or Counting Arena!",
+          "🚀 That's a great squad idea. Let's make it happen!",
+          "👑 Krylo's Skybase & The Half Lifes on top!"
+        ];
+        botDiv.textContent = fallbackAnswers[Math.floor(Math.random() * fallbackAnswers.length)];
+      }
+      container.scrollTop = container.scrollHeight;
+    }
+
+    // Reaction Duel Engine
+    let reactionState = 'idle'; // idle | waiting | ready
+    let reactionTimer = null;
+    let reactionStartTime = 0;
+    let bestReaction = null;
+
+    function handleReactionClick() {
+      const box = document.getElementById('reaction-box');
+      const result = document.getElementById('reaction-result');
+
+      if (reactionState === 'idle') {
+        reactionState = 'waiting';
+        box.className = 'reaction-box waiting';
+        box.textContent = 'Wait for GREEN...';
+        const delay = Math.floor(Math.random() * 3000) + 1500;
+        reactionTimer = setTimeout(() => {
+          reactionState = 'ready';
+          box.className = 'reaction-box ready';
+          box.textContent = 'CLICK NOW! ⚡';
+          reactionStartTime = Date.now();
+        }, delay);
+      } else if (reactionState === 'waiting') {
+        clearTimeout(reactionTimer);
+        reactionState = 'idle';
+        box.className = 'reaction-box';
+        box.textContent = 'Too soon! ❌ Click to try again.';
+      } else if (reactionState === 'ready') {
+        const diff = Date.now() - reactionStartTime;
+        reactionState = 'idle';
+        box.className = 'reaction-box';
+        box.textContent = `${diff} ms! 🔥 Click to play again.`;
+        if (!bestReaction || diff < bestReaction) {
+          bestReaction = diff;
+          result.textContent = `Best Reaction: ${bestReaction} ms 👑`;
+        }
+      }
+    }
+
+    // Counting Game State
+    let countNum = 26;
+    function incrementCounting() {
+      countNum += 1;
+      document.getElementById('counting-display').textContent = countNum;
+      document.getElementById('counting-next').textContent = countNum + 1;
+    }
+
+    // Trivia Quiz Engine
+    const triviaQuestions = [
+      { q: "What is the diamond count required to craft a full set of Minecraft armor?", opts: ["A. 24", "B. 26", "C. 28", "D. 30"], ans: 0 },
+      { q: "What command in Discord launches voice activities with Krims Code?", opts: ["A. /voice", "B. /activity", "C. /game", "D. /play"], ans: 1 },
+      { q: "In Minecraft, what is the maximum build height in modern versions?", opts: ["A. 256", "B. 320", "C. 384", "D. 512"], ans: 1 },
+      { q: "Which programming language powers Krims Code AI's Discord Bot Engine?", opts: ["A. Python", "B. Node.js (JavaScript)", "C. Rust", "D. C#"], ans: 1 },
+      { q: "What clan is currently dominating the Counting Challenge?", opts: ["A. Ender Dragons", "B. The Half Lifes", "C. Redstone Engineers", "D. Nether Lords"], ans: 1 }
+    ];
+    let triviaIdx = 0;
+    let triviaScore = 0;
+
+    function checkTrivia(optIdx) {
+      const qObj = triviaQuestions[triviaIdx];
+      const buttons = document.querySelectorAll('.trivia-btn');
+      if (optIdx === qObj.ans) {
+        buttons[optIdx].classList.add('correct');
+        triviaScore++;
+      } else {
+        buttons[optIdx].classList.add('wrong');
+        buttons[qObj.ans].classList.add('correct');
+      }
+
+      document.getElementById('trivia-score').textContent = `Score: ${triviaScore} / ${triviaQuestions.length}`;
+
+      setTimeout(() => {
+        triviaIdx = (triviaIdx + 1) % triviaQuestions.length;
+        const nextQ = triviaQuestions[triviaIdx];
+        document.getElementById('trivia-q').textContent = nextQ.q;
+        const optsDiv = document.getElementById('trivia-opts');
+        optsDiv.innerHTML = '';
+        nextQ.opts.forEach((o, i) => {
+          const btn = document.createElement('button');
+          btn.className = 'trivia-btn';
+          btn.textContent = o;
+          btn.onclick = () => checkTrivia(i);
+          optsDiv.appendChild(btn);
+        });
+      }, 1200);
+    }
+  </script>
+</body>
+</html>

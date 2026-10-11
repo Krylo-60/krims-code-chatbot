@@ -4,6 +4,18 @@
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/console", "destination": "/console.html" },
+    { "source": "/activity", "destination": "/activity.html" },
     { "source": "/(.*)", "destination": "/$1" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors 'self' https://*.discord.com https://discord.com https://*.discord.gg;"
+        }
+      ]
+    }
   ]
 }
